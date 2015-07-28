@@ -11,7 +11,7 @@
 #include "pwm.h"
 #include "io.h"
 
-void clbck_PwmTest_timer();
+void isr_PwmTest_timer();
 
 /*
  * change output on cPin every ~ 0,5s (bus freq = 4MHz)
@@ -24,13 +24,18 @@ public:
 };
 
 /*
- * 50 duty cycle output on pin TPMCH0
+ * changing duty cycle output on pin TPMCH0
  */
 class PwmTest_pwm
 {
 public:
-	PwmTest_pwm();
+	PwmTest_pwm(const Word cSpeed = 1);
 	virtual ~PwmTest_pwm();
+	void run();
+private:
+	Word speed;
+	Word channelValue;	
+	Bool bDirectionUp;
 };
 
 #endif /* PWM_TEST_H_ */
