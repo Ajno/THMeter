@@ -12,19 +12,27 @@
 
 typedef enum
 {
-	cPin_A2,
-	cPin_A3,
-	cPin_B4,
-	cPin_B6,
-	cPin_B7
+	cPin_A1	= 0,
+	cPin_A2	= 1,
+	cPin_A3	= 2,
+	cPin_B0	= 3,
+	cPin_B1	= 4,
+	cPin_B2	= 5,
+	cPin_B3	= 6,
+	cPin_B4	= 7,
+	cPin_B5	= 8,
+	cPin_B6	= 9,
+	cPin_B7	= 10
 } pin_t;
 
 typedef struct
 {
-	Bool b_output; // output or input?
+	Bool bOutput; // output otherwise input?
+	Bool bPullup; // internal pull-up enabled?	
 } pinConfig_t;
 
 void configurePin(const pin_t idx, const pinConfig_t& config);
 void writePin(const pin_t idx, const Bool value);
+void readPin(const pin_t idx, Bool& rValue);
 
 #endif /* IO_PINS_H_ */

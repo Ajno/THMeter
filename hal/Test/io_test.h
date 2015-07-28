@@ -18,20 +18,19 @@ public:
 	void run();
 private:
 	Bool 	pinVal;
-	pin_t 	pin;
+	pin_t 	pinIdx;
 	Word 	cntr;
 };
 
-class IoTest_input
+class IoTest_inputOutput
 {
 public:
-	IoTest_input(const pin_t pin);
-	virtual ~IoTest_input();
+	IoTest_inputOutput(const pin_t cInPin, const pin_t cOutPin);
+	virtual ~IoTest_inputOutput();
 	void run();
 private:
-//	Bool 	pinVal;
-//	pin_t 	pin;
-//	Word 	cntr;
+	pin_t	input;
+	pin_t	output;
 };
 
 #endif /* IO_TEST_H_ */

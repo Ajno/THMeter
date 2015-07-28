@@ -10,12 +10,12 @@
 IoTest_output::IoTest_output(const pin_t cPin)
 {
 	pinConfig_t outputCfg;
-	outputCfg.b_output = TRUE;
+	outputCfg.bOutput = TRUE;
 	pinVal = FALSE;
 	
 	configurePin(cPin, outputCfg);
 
-	this->pin = cPin;
+	this->pinIdx = cPin;
 	this->cntr = 0;
 }
 
@@ -30,7 +30,33 @@ void IoTest_output::run()
 	if (toogle < cntr)
 	{			
 		(FALSE == this->pinVal) ? (this->pinVal = TRUE):(this->pinVal = FALSE);
-		writePin(this->pin,this->pinVal);
+		writePin(this->pinIdx,this->pinVal);
 		this->cntr = 0;
 	}
+}
+
+IoTest_inputOutput::IoTest_inputOutput(const pin_t cInPin, const pin_t cOutPin)
+{
+	pinConfig_t inputCfg;
+	inputCfg.bOutput = FALSE;
+	inputCfg.bPullup = TRUE;
+	pinConfig_t outputCfg;
+	outputCfg.bOutput = TRUE;
+	
+	this->input = cInPin;
+	this->output = cOutPin;
+	
+	configurePin(this->input, inputCfg);
+	configurePin(this->output, outputCfg);
+}
+
+IoTest_inputOutput::~IoTest_inputOutput()
+{
+}
+
+void IoTest_inputOutput::run()
+{
+	Bool value = FALSE;
+	readPin(this->input,value);
+	writePin(this->output,value);
 }

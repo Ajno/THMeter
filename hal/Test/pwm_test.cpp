@@ -16,7 +16,7 @@ PwmTest_timer::PwmTest_timer(const pin_t cPin)
 	bPwmTestTimerLedOn = FALSE;
 	
 	pinConfig_t outputCfg;
-	outputCfg.b_output = TRUE;
+	outputCfg.bOutput = TRUE;
 	
 	configurePin(pwmTestTimerLedPin, outputCfg);
 	
