@@ -57,7 +57,7 @@ typedef struct
 
 typedef void (*pInterruptCallback_t)(void);
 
-void configurePwm(const pwmConfig_t& cfg);
+void configurePwm(const pwmConfig_t cfg);
 Word readPwmTimer();
 void writePwmModulo(const Word modulo);
 void writePwmChannel(const Word value);

@@ -31,8 +31,8 @@ typedef struct
 	Bool bPullup; // internal pull-up enabled?	
 } pinConfig_t;
 
-void configurePin(const pin_t idx, const pinConfig_t& config);
+void configurePin(const pin_t idx, const pinConfig_t config);
 void writePin(const pin_t idx, const Bool value);
-void readPin(const pin_t idx, Bool& rValue);
+void readPin(const pin_t idx, Bool* pValue);
 
 #endif /* IO_PINS_H_ */

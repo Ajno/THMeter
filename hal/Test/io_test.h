@@ -10,27 +10,11 @@
 
 #include "io.h"
 
-class IoTest_output
-{
-public:
-	IoTest_output(const pin_t pin);
-	virtual ~IoTest_output();
-	void run();
-private:
-	Bool 	pinVal;
-	pin_t 	pinIdx;
-	Word 	cntr;
-};
+void IoTest_output_init(const pin_t pin);
+void IoTest_output_run();
 
-class IoTest_inputOutput
-{
-public:
-	IoTest_inputOutput(const pin_t cInPin, const pin_t cOutPin);
-	virtual ~IoTest_inputOutput();
-	void run();
-private:
-	pin_t	input;
-	pin_t	output;
-};
+void IoTest_inputOutput_init(const pin_t cInPin, const pin_t cOutPin);
+void IoTest_inputOutput_run();
+
 
 #endif /* IO_TEST_H_ */
