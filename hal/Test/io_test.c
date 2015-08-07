@@ -14,7 +14,7 @@ static struct
 	Word 	cntr;
 }test_out;
 
-void IoTest_output_init(const pin_t cPin)
+void test_io_output_init(const pin_t cPin)
 {
 	pinConfig_t outputCfg;
 	outputCfg.bOutput = TRUE;
@@ -26,7 +26,7 @@ void IoTest_output_init(const pin_t cPin)
 	test_out.cntr = 0;
 }
 
-void IoTest_output_run()
+void test_io_output_run()
 {
 	const Word toogle = 20000;
 	test_out.cntr++;
@@ -44,7 +44,7 @@ static struct
 	pin_t	outIdx;
 }test_inOut;
 
-void IoTest_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
+void test_io_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
 {
 	pinConfig_t inputCfg;
 	pinConfig_t outputCfg;
@@ -60,9 +60,9 @@ void IoTest_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
 	configurePin(test_inOut.outIdx, outputCfg);
 }
 
-void IoTest_inputOutput_run()
+void test_io_inputOutput_run()
 {
-	Bool value = FALSE;
+	auto Bool value = FALSE;
 	readPin(test_inOut.inIdx,&value);
 	writePin(test_inOut.outIdx,value);
 }

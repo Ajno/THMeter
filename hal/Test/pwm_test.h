@@ -14,12 +14,12 @@
 /*
  * change output on cPin every ~ 0,5s (bus freq = 4MHz)
  */
-void PwmTest_timer_init(const pin_t cPin);
+void test_pwm_timer_init(const pin_t cPin);
 
 /*
  * changing duty cycle output on pin TPMCH0
  */
-void PwmTest_pwm_init(const Word cSpeed);
-void PwmTest_pwm_run();
+void test_pwm_chnl_init(const Word cSpeed);
+void test_pwm_chnl_run();
 
 #endif /* PWM_TEST_H_ */

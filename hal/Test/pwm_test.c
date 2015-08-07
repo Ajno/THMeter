@@ -9,92 +9,92 @@
 
 static struct
 {
-	pin_t pwmTestTimerLedPin;
-	Bool bPwmTestTimerLedOn;
+	pin_t ledIdx;
+	Bool bLedOn;
 } test_timer =
-{ 
-		cPin_B7, 
-		FALSE, 
-};
+{ cPin_B7, FALSE, };
 
-void isr_PwmTest_timer()
+static void isr_timer()
 {
-	writePin(test_timer.pwmTestTimerLedPin, test_timer.bPwmTestTimerLedOn);
-	test_timer.bPwmTestTimerLedOn = !test_timer.bPwmTestTimerLedOn;
+	writePin(test_timer.ledIdx, test_timer.bLedOn);
+	test_timer.bLedOn = !test_timer.bLedOn;
 }
 
 /*
  * PWM timer
  */
-void PwmTest_timer_init(const pin_t cPin)
+void test_pwm_timer_init(const pin_t cPin)
 {
 	pinConfig_t outputCfg;
 	pwmConfig_t pwmCfg;
 
-	test_timer.pwmTestTimerLedPin = cPin;
-	test_timer.bPwmTestTimerLedOn = FALSE;
+	test_timer.ledIdx = cPin;
+	test_timer.bLedOn = FALSE;
 
 	outputCfg.bOutput = TRUE;
 	pwmCfg.bOverflowInterruptEnable = TRUE;
 	pwmCfg.clock = cPwmClk_bus;	// 4MHz
 	pwmCfg.prescaler = cPwmPrsclr_32; // 4M/32=125k
 
-	configurePin(test_timer.pwmTestTimerLedPin, outputCfg);
+	configurePin(test_timer.ledIdx, outputCfg);
 	configurePwm(pwmCfg);
-	installPwmTimerIsr(isr_PwmTest_timer);
+	installPwmTimerIsr(isr_timer);
 }
 
 /*
  * edge aligned PWM
  */
-
+const Word MODULO = 2000;
 static struct
 {
 	Word speed;
 	Word channelValue;
 	Bool bDirectionUp;
-} test_pwm =
+} test_chnl =
 { 
 		1, // default speed
 		0, 
-		0 
+		TRUE // default direction is UP 
 };
-
-void PwmTest_pwm_init(const Word cSpeed)
+void test_pwm_chnl_init(const Word cSpeed)
 {
 	pwmConfig_t pwmCfg;
 
-	test_pwm.speed = cSpeed;
-	test_pwm.channelValue = 0;
-	test_pwm.bDirectionUp = TRUE;
+	test_chnl.speed = cSpeed;
+	test_chnl.channelValue = 0;
+	test_chnl.bDirectionUp = TRUE;
 
 	pwmCfg.bOverflowInterruptEnable = FALSE;
 	pwmCfg.clock = cPwmClk_bus;	// 4MHz
 	pwmCfg.prescaler = cPwmPrsclr_1; // 4M
 	pwmCfg.chnnl.mode = cPwmMode_edgeAligned_clear;
 
+	writePwmModulo(MODULO);//5kHz PWM
+	writePwmChannel(MODULO*0.1625);//0.1625 duty
 	configurePwm(pwmCfg);
-	writePwmChannel(0x7fff);
 }
 
-void PwmTest_pwm_run()
+void test_pwm_chnl_run()
 {
-	if (test_pwm.bDirectionUp)
+	if (0 != test_chnl.speed)
 	{
-		test_pwm.channelValue += test_pwm.speed;
-		if ((0xffff - test_pwm.speed) <= test_pwm.channelValue)
+		if (test_chnl.bDirectionUp)
 		{
-			test_pwm.bDirectionUp = !test_pwm.bDirectionUp;
+			test_chnl.channelValue += test_chnl.speed;
+			if ((MODULO - test_chnl.speed) <= test_chnl.channelValue)
+			{
+				test_chnl.bDirectionUp = !test_chnl.bDirectionUp;
+			}
 		}
-	}
-	else
-	{
-		test_pwm.channelValue -= test_pwm.speed;
-		if ((0x0000 + test_pwm.speed) >= test_pwm.channelValue)
+		else
 		{
-			test_pwm.bDirectionUp = !test_pwm.bDirectionUp;
+			test_chnl.channelValue -= test_chnl.speed;
+			if ((0x0000 + test_chnl.speed) >= test_chnl.channelValue)
+			{
+				test_chnl.bDirectionUp = !test_chnl.bDirectionUp;
+			}
 		}
+	
+		writePwmChannel(test_chnl.channelValue);
 	}
-
-	writePwmChannel(test_pwm.channelValue);
 }

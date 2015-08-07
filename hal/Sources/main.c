@@ -1,7 +1,9 @@
 #include <hidef.h> /* for EnableInterrupts macro */
 #include "derivative.h" /* include peripheral declarations */
 
-#include "demo.h"
+//#include "demo.h"
+#include "button.h"
+#include "display.h"
 #include "pwm_test.h"
 #include "io_test.h"
 
@@ -9,13 +11,13 @@ void main(void)
 {
 	EnableInterrupts
 	
-	IoTest_inputOutput_init(SW_1,LED_1);
-	PwmTest_pwm_init(5);
+	test_io_inputOutput_init(BUTTON_LOW,LED_LCD);
+	test_pwm_chnl_init(0);
 	
 	for (;;)
 	{
-		IoTest_inputOutput_run();		
-		PwmTest_pwm_run();
+		test_io_inputOutput_run();
+//		test_pwm_chnl_run();
 		
 		__RESET_WATCHDOG()
 		; /* feeds the dog */
