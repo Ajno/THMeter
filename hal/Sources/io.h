@@ -28,8 +28,8 @@ typedef enum
 typedef struct
 {
 	Bool bOutput; // output otherwise input?
-	Bool bPullup; // internal pull-up enabled?	
-} pinConfig_t;
+	Bool bPullUp; // internal pull-up enabled?		
+}pinConfig_t;
 
 void configurePin(const pin_t idx, const pinConfig_t config);
 void writePin(const pin_t idx, const Bool value);

@@ -50,7 +50,7 @@ void test_io_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
 	pinConfig_t outputCfg;
 	
 	inputCfg.bOutput = FALSE;
-	inputCfg.bPullup = TRUE;	
+	inputCfg.bPullUp = TRUE;	
 	outputCfg.bOutput = TRUE;
 	
 	test_inOut.inIdx = cInPin;

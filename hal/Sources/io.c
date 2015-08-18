@@ -25,57 +25,57 @@ void configurePin(const pin_t idx, const pinConfig_t cfg)
 	if (cPin_A1 == idx)
 	{
 		PTADD_PTADD1 = boolToByte(cfg.bOutput);
-		PTAPE_PTAPE1 = boolToByte(cfg.bPullup);
+		PTAPE_PTAPE1 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_A2 == idx)
 	{
 		PTADD_PTADD2 = boolToByte(cfg.bOutput);
-		PTAPE_PTAPE2 = boolToByte(cfg.bPullup);
+		PTAPE_PTAPE2 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_A3 == idx)
 	{
 		PTADD_PTADD3 = boolToByte(cfg.bOutput);
-		PTAPE_PTAPE3 = boolToByte(cfg.bPullup);
+		PTAPE_PTAPE3 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B0 == idx)
 	{
 		PTBDD_PTBDD0 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE0 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE0 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B1 == idx)
 	{
 		PTBDD_PTBDD1 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE1 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE1 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B2 == idx)
 	{
 		PTBDD_PTBDD2 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE2 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE2 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B3 == idx)
 	{
 		PTBDD_PTBDD3 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE3 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE3 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B4 == idx)
 	{
 		PTBDD_PTBDD4 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE4 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE4 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B5 == idx)
 	{
 		PTBDD_PTBDD5 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE5 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE5 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B6 == idx)
 	{
 		PTBDD_PTBDD6 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE6 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE6 = boolToByte(cfg.bPullUp);
 	}
 	else if (cPin_B7 == idx)
 	{
 		PTBDD_PTBDD7 = boolToByte(cfg.bOutput);
-		PTBPE_PTBPE7 = boolToByte(cfg.bPullup);
+		PTBPE_PTBPE7 = boolToByte(cfg.bPullUp);
 	}
 }
 
