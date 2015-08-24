@@ -2,21 +2,24 @@
 #include "derivative.h" /* include peripheral declarations */
 
 //#include "demo.h"
-#include "button.h"
+//#include "buttons.h"
 //#include "display.h"
 //#include "pwm_test.h"
 //#include "io_test.h"
-#include "kbi_test.h"
+//#include "kbi_test.h"
+#include "timer.h"
+#include "display.h"
 
 void main(void)
 {
 	EnableInterrupts
-	
-	test_kbi_init(BUTTON_LOW);
-	test_kbi_init(BUTTON_UPP);
-	
+
+	initTimer();
+	initDisplay();
+
 	for (;;)
 	{
+		setBackLight(TRUE);
 		__RESET_WATCHDOG()
 		; /* feeds the dog */
 	} /* loop forever */

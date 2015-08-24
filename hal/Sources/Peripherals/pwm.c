@@ -11,24 +11,31 @@
 static Bool bIsrClbckInstalled = FALSE;
 static pInterruptCallback_t pIsrClbck;
 
-void configurePwm(const pwmConfig_t cfg)
+void configurePwmTimer(const configPwmTimer_t cfg)
 {
-	// clear all registers
+	// clear register
 	TPMSC = 0;
-	TPMC0SC = 0;
-	TPMC1SC = 0;
 	// counter
-	TPMSC_CLKSx = cfg.clock;
-	TPMSC_PS = cfg.prescaler;
 	TPMSC_TOIE = cfg.bOverflowInterruptEnable;
+	TPMSC_PS = cfg.prescaler;
+	TPMSC_CLKSx = cfg.clock;
+}
+
+void configurePwmChannel(const configPwmChannel_t cfg)
+{
 	// channel 0
-	TPMC0SC = TPMC0SC | (cfg.chnnl.mode << TPMC0SC_ELS0x_BITNUM);
+	TPMC0SC = TPMC0SC | (cfg.mode << TPMC0SC_ELS0x_BITNUM);
 //	TPMC0SC_CH0IE = cfg.chnnl0.bChannelInterruptEnable;
 }
 
 Word readPwmTimer()
 {
 	return TPMCNT;
+}
+
+Word readPwmModulo()
+{
+	return TPMMOD;
 }
 
 void writePwmModulo(const Word modulo)

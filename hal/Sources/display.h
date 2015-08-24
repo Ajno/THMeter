@@ -8,8 +8,7 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
-#include "io.h"
-
-static const pin_t LED_LCD = cPin_B4;
+void initDisplay();
+void setBackLight(const Bool bBackLightOn);
 
 #endif /* DISPLAY_H_ */

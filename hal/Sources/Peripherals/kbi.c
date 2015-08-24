@@ -35,7 +35,7 @@ static const Byte cKbiIn2PinIdx[cKbiIn_P3 + 1] =
 
 void configureKbi(const kbiPin_t idx, const kbiConfig_t config)
 {
-	pinConfig_t pin;
+	configPin_t pin;
 	pin.bPullUp = config.bPullUp;
 	pin.bOutput = FALSE;
 	//	1. Mask keyboard interrupts by clearing KBIE in KBISC.

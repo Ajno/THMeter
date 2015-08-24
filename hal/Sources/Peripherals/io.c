@@ -20,7 +20,7 @@ byte boolToByte(const Bool cBool)
 	}
 }
 
-void configurePin(const pin_t idx, const pinConfig_t cfg)
+void configurePin(const pin_t idx, const configPin_t cfg)
 {
 	if (cPin_A1 == idx)
 	{

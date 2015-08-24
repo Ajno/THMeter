@@ -45,20 +45,21 @@ typedef enum
 typedef struct
 {
 	pwmMode_t	mode;
-} pwmChannel_t;
+} configPwmChannel_t;
 
 typedef struct
 {
 	pwmClock_t 		clock;
 	pwmPrescaler_t	prescaler;
 	Bool			bOverflowInterruptEnable;
-	pwmChannel_t	chnnl;
-} pwmConfig_t;
+} configPwmTimer_t;
 
 typedef void (*pInterruptCallback_t)(void);
 
-void configurePwm(const pwmConfig_t cfg);
+void configurePwmTimer(const configPwmTimer_t cfg);
+void configurePwmChannel(const configPwmChannel_t cfg);
 Word readPwmTimer();
+Word readPwmModulo();
 void writePwmModulo(const Word modulo);
 void writePwmChannel(const Word value);
 void installPwmTimerIsr(pInterruptCallback_t pcIsrClbck);

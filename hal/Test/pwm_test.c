@@ -25,8 +25,8 @@ static void isr_timer()
  */
 void test_pwm_timer_init(const pin_t cPin)
 {
-	pinConfig_t outputCfg;
-	pwmConfig_t pwmCfg;
+	configPin_t outputCfg;
+	configPwmTimer_t pwmCfg;
 
 	test_timer.ledIdx = cPin;
 	test_timer.bLedOn = FALSE;
@@ -37,7 +37,7 @@ void test_pwm_timer_init(const pin_t cPin)
 	pwmCfg.prescaler = cPwmPrsclr_32; // 4M/32=125k
 
 	configurePin(test_timer.ledIdx, outputCfg);
-	configurePwm(pwmCfg);
+	configurePwmTimer(pwmCfg);
 	installPwmTimerIsr(isr_timer);
 }
 
@@ -58,20 +58,22 @@ static struct
 };
 void test_pwm_chnl_init(const Word cSpeed)
 {
-	pwmConfig_t pwmCfg;
+	configPwmTimer_t cfgTimer = {0};
+	configPwmChannel_t cfgChannel = {0};
 
 	test_chnl.speed = cSpeed;
 	test_chnl.channelValue = 0;
 	test_chnl.bDirectionUp = TRUE;
 
-	pwmCfg.bOverflowInterruptEnable = FALSE;
-	pwmCfg.clock = cPwmClk_bus;	// 4MHz
-	pwmCfg.prescaler = cPwmPrsclr_1; // 4M
-	pwmCfg.chnnl.mode = cPwmMode_edgeAligned_clear;
+	cfgTimer.bOverflowInterruptEnable = FALSE;
+	cfgTimer.clock = cPwmClk_bus;	// 4MHz
+	cfgTimer.prescaler = cPwmPrsclr_1; // 4M
+	cfgChannel.mode = cPwmMode_edgeAligned_clear;
 
-	writePwmModulo(MODULO);//5kHz PWM
+	writePwmModulo(MODULO);//2kHz PWM
+	configurePwmTimer(cfgTimer);
+	configurePwmChannel(cfgChannel);
 	writePwmChannel(MODULO*0.1625);//0.1625 duty
-	configurePwm(pwmCfg);
 }
 
 void test_pwm_chnl_run()
