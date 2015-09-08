@@ -21,7 +21,7 @@ void configurePwmTimer(const configPwmTimer_t cfg)
 	TPMSC_CLKSx = cfg.clock;
 }
 
-void configurePwmChannel(const configPwmChannel_t cfg)
+void configurePwmChannel(const pwmChannelConfig_t cfg)
 {
 	// channel 0
 	TPMC0SC = TPMC0SC | (cfg.mode << TPMC0SC_ELS0x_BITNUM);

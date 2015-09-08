@@ -45,7 +45,7 @@ typedef enum
 typedef struct
 {
 	pwmMode_t	mode;
-} configPwmChannel_t;
+} pwmChannelConfig_t;
 
 typedef struct
 {
@@ -57,7 +57,7 @@ typedef struct
 typedef void (*pInterruptCallback_t)(void);
 
 void configurePwmTimer(const configPwmTimer_t cfg);
-void configurePwmChannel(const configPwmChannel_t cfg);
+void configurePwmChannel(const pwmChannelConfig_t cfg);
 Word readPwmTimer();
 Word readPwmModulo();
 void writePwmModulo(const Word modulo);

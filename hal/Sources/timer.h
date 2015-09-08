@@ -8,6 +8,10 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-void initTimer();
+#include <stdtypes.h>
+
+void timerInit();
+void wait500ns();
+void waitX100us(const Word cDelay);
 
 #endif /* TIMER_H_ */

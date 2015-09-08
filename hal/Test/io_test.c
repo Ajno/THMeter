@@ -16,7 +16,7 @@ static struct
 
 void test_io_output_init(const pin_t cPin)
 {
-	configPin_t outputCfg;
+	pinConfig_t outputCfg;
 	outputCfg.bOutput = TRUE;
 	test_out.val = FALSE;
 	
@@ -46,8 +46,8 @@ static struct
 
 void test_io_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
 {
-	configPin_t inputCfg;
-	configPin_t outputCfg;
+	pinConfig_t inputCfg;
+	pinConfig_t outputCfg;
 	
 	inputCfg.bOutput = FALSE;
 	inputCfg.bPullUp = TRUE;	

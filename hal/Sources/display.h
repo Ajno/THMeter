@@ -8,7 +8,9 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
-void initDisplay();
-void setBackLight(const Bool bBackLightOn);
+#include <stdtypes.h>
+
+void displayInit();
+void displayBackLightOn(const Bool bBackLightOn);
 
 #endif /* DISPLAY_H_ */

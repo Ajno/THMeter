@@ -29,10 +29,12 @@ typedef struct
 {
 	Bool bOutput; // output otherwise input?
 	Bool bPullUp; // internal pull-up enabled?		
-}configPin_t;
+}pinConfig_t;
 
-void configurePin(const pin_t idx, const configPin_t config);
+void configurePin(const pin_t idx, const pinConfig_t config);
+void configurePortB(const pinConfig_t config);
 void writePin(const pin_t idx, const Bool value);
+void writePortB(const Byte cValue);
 void readPin(const pin_t idx, Bool* pValue);
 
 #endif /* IO_PINS_H_ */
