@@ -33,7 +33,13 @@ typedef struct
 {
     Bool    bCursorDirectionForward;
     Bool    bAutomaticShiftOfDisplay;
-}displayMovingDirection_t;
+}displayAutomaticMovingDirection_t;
+
+typedef struct
+{
+    Bool    bShiftDisplayInsteadOfCursor;
+    Bool    bShiftForward;
+}displayShiftDirection_t;
 
 static const Byte cMask_Backligh = 0x10;
 
@@ -71,6 +77,7 @@ void displayPrepareBusForWrite()
         configurePin(cDisplayBus_DB5,pinCfg);
         configurePin(cDisplayBus_DB6,pinCfg);
         configurePin(cDisplayBus_DB7,pinCfg);
+        bDataBusConfiguredAsOutput = pinCfg.bOutput;
     }
     // clear port B except backlight
     readPortB(&portB);
@@ -106,7 +113,7 @@ void displayOnOffControl(const displayOnOffControl_t cControl)
     displayToggleEnable();
     
     /* 
-     * write lower byte
+     * write lower 4 bits
      * set bit 3 in X
      * set bit D in X
      * set bit C in X
@@ -119,62 +126,48 @@ void displayOnOffControl(const displayOnOffControl_t cControl)
     displayToggleEnable();
 }
 
+void displayOrCursorShift(const displayShiftDirection_t cSetting)
+{
+    displayPrepareBusForWrite();
+    writePin(cDisplayBus_DB4, TRUE);
+    displayToggleEnable();
+    
+    // write lower 4 bits, set S/C, set R/L
+    writePin(cDisplayBus_DB7, cSetting.bShiftDisplayInsteadOfCursor);
+    writePin(cDisplayBus_DB6, cSetting.bShiftForward);
+    displayToggleEnable();
+}
+
 void displayFunctionSet()
 {
     displayPrepareBusForWrite();
     // set bit 1 of higher byte
     writePin(cDisplayBus_DB5,TRUE);
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    displayToggleEnable();
     
-    // write lower byte, set bit N in X,  bit F has no meaning when N is set
+    // write lower 4 bits, set bit N in X,  bit F has no meaning when N is set
     writePin(cDisplayBus_DB7,TRUE);
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    displayToggleEnable();
 }
 
-void displayEntryModeSet(const displayMovingDirection_t cSetting)
+void displayEntryModeSet(const displayAutomaticMovingDirection_t cSetting)
 {
     displayPrepareBusForWrite();
     // set bit 2 in higher byte
     writePin(cDisplayBus_DB6,TRUE);
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    displayToggleEnable();
     
-    // write lower byte, set bit ID, set bit S
+    // write lower 4 bits, set bit ID, set bit S
     writePin(cDisplayBus_DB5, cSetting.bCursorDirectionForward);
     writePin(cDisplayBus_DB4,cSetting.bAutomaticShiftOfDisplay);
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    displayToggleEnable();
 }
 
-void displayReadBusyAndAddress()
+void displayReadBusyAndAddress(Byte* pData)
 {
     pinConfig_t pinCfg;
+    Byte upperBits = 0;
+    Byte lowerBits = 0;
     
     if (bDataBusConfiguredAsOutput)
     {
@@ -184,96 +177,55 @@ void displayReadBusyAndAddress()
         configurePin(cDisplayBus_DB4,pinCfg);
         configurePin(cDisplayBus_DB5,pinCfg);
         configurePin(cDisplayBus_DB6,pinCfg);
-        configurePin(cDisplayBus_DB7,pinCfg);        
+        configurePin(cDisplayBus_DB7,pinCfg);
+        bDataBusConfiguredAsOutput = pinCfg.bOutput;
     }
     // clear RS
     writePin(cDisplayBus_RS,FALSE);
     // set RW
     writePin(cDisplayBus_RW,TRUE);
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
-    // read upper byte
-    //todo
+    displayToggleEnable();
+    // read upper 4 bits
+    readPortB(&upperBits);
+    upperBits = (upperBits << 4);
     
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
-    // read lower byte
-    //todo
+    displayToggleEnable();
+    // read lower 4 bits
+    readPortB(&lowerBits); 
+    *pData = (lowerBits & 0x0F) | (upperBits & 0xF0);
 }
 
 void displayFirstStart()
 {
-    const Word cSet_DB5     = 2;
-    const Word cSet_DB4_DB5 = 3;
     displayOnOffControl_t onOffSetting;
-    displayMovingDirection_t dirSetting;
+    displayAutomaticMovingDirection_t dirSetting;
     
     // wait 45 ms
     waitX100us(450);
-    
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // write upper byte
-    writePortB(cSet_DB4_DB5);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+        
+    // write DB5 DB4
+    displayPrepareBusForWrite();
+    writePin(cDisplayBus_DB5, TRUE);
+    writePin(cDisplayBus_DB4, TRUE);
+    displayToggleEnable();
     
     // wait 5 ms
     waitX100us(50);
     
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // write upper byte
-    writePortB(cSet_DB4_DB5);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    // write DB5 DB4
+    displayToggleEnable();
     
     // wait 0,5 ms
     waitX100us(5);
     
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // write upper byte
-    writePortB(cSet_DB4_DB5);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    // write DB5 DB4
+    displayToggleEnable();
     
     //Function set (Set interface to be 4 bits long.)
     //Interface is 8 bits in length.
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // write upper byte
-    writePortB(cSet_DB5);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    // write upper 4 bits
+    writePin(cDisplayBus_DB4, FALSE);
+    displayToggleEnable();
     
     //Function set (Interface is 4 bits long. Specify the
     //number of display lines and character font.)

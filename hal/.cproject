@@ -65,7 +65,7 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="toolchain.config.hcs08.release.1416840092.1079362835" name="pwm_test.c" rcbsApplicability="disable" resourcePath="Test/pwm_test.c" toolsToInvoke="hcs08.toolchain.compiler.395098646.534140143">
-						<tool id="hcs08.toolchain.compiler.395098646.534140143" name="HCS08 Compiler" superClass="hcs08.toolchain.compiler.395098646">
+						<tool errorParsers="" id="hcs08.toolchain.compiler.395098646.534140143" name="HCS08 Compiler" superClass="hcs08.toolchain.compiler.395098646">
 							<inputType id="hcs08.toolchain.compiler.base.input.c.1502288089" name="HCS08 Compiler C Input" superClass="hcs08.toolchain.compiler.base.input.c"/>
 							<inputType id="hcs08.toolchain.compiler.base.input.cpp.930600688" name="HCS08 Compiler CPP Input" superClass="hcs08.toolchain.compiler.base.input.cpp"/>
 						</tool>
@@ -77,7 +77,7 @@
 						</tool>
 					</fileInfo>
 					<fileInfo id="toolchain.config.hcs08.release.1416840092.88505591" name="io_test.c" rcbsApplicability="disable" resourcePath="Test/io_test.c" toolsToInvoke="hcs08.toolchain.compiler.395098646.1084372396">
-						<tool id="hcs08.toolchain.compiler.395098646.1084372396" name="HCS08 Compiler" superClass="hcs08.toolchain.compiler.395098646">
+						<tool errorParsers="" id="hcs08.toolchain.compiler.395098646.1084372396" name="HCS08 Compiler" superClass="hcs08.toolchain.compiler.395098646">
 							<inputType id="hcs08.toolchain.compiler.base.input.c.1681695612" name="HCS08 Compiler C Input" superClass="hcs08.toolchain.compiler.base.input.c"/>
 							<inputType id="hcs08.toolchain.compiler.base.input.cpp.1702631736" name="HCS08 Compiler CPP Input" superClass="hcs08.toolchain.compiler.base.input.cpp"/>
 						</tool>
