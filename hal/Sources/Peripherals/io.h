@@ -35,6 +35,7 @@ void configurePin(const pin_t idx, const pinConfig_t config);
 void configurePortB(const pinConfig_t config);
 void writePin(const pin_t idx, const Bool value);
 void writePortB(const Byte cValue);
+void readPortB(Byte* pValue);
 void readPin(const pin_t idx, Bool* pValue);
 
 #endif /* IO_PINS_H_ */

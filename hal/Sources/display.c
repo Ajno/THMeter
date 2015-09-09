@@ -10,12 +10,18 @@
 #include "io.h"
 #include "timer.h"
 
+static const Byte cMaskBacklighAndEnable = 0x30;
+
 enum displayBus
 {
-    cDisplayBus_RS          = cPin_B7,
-    cDisplayBus_RW          = cPin_B6,
-    cDisplayBus_E           = cPin_B5,
+    cDisplayBus_DB4         = cPin_B0,
+    cDisplayBus_DB5         = cPin_B1,
+    cDisplayBus_DB6         = cPin_B2,
+    cDisplayBus_DB7         = cPin_B3,
     cDisplayBus_backLight   = cPin_B4,
+    cDisplayBus_E           = cPin_B5,
+    cDisplayBus_RW          = cPin_B6,
+    cDisplayBus_RS          = cPin_B7
 };
 
 void displayInit()
@@ -39,10 +45,56 @@ void displayBackLightOn(const Bool bBackLightOn)
 
 void displayClear()
 {
+    Byte portB = 0;
+    
     // set enable
     writePin(cDisplayBus_E,TRUE);
-    // write upper byte
-    writePortB(0);
+    /*
+     *  @write upper byte
+     * read port B to X
+     * clear X with masked backlight and enable
+     * write X to port B 
+     * */
+    readPortB(&portB);
+    portB = portB & cMaskBacklighAndEnable;
+    writePortB(portB);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+    
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    /*
+     * @write lower byte
+     * set bit 0 port B 
+     * */
+    writePin(cDisplayBus_DB4, TRUE);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+}
+
+void displayOnOffControl()
+{
+    Byte portB = 0;
+    
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    /*
+     *  @write upper byte
+     * read port B to X
+     * clear X with masked backlight and enable
+     * write X to port B 
+     * */
+    readPortB(&portB);
+    portB = portB & cMaskBacklighAndEnable;
+    writePortB(portB);
     // wait
     wait500ns();
     // clear enable
@@ -53,7 +105,16 @@ void displayClear()
     // set enable
     writePin(cDisplayBus_E,TRUE);
     // write lower byte
-    writePortB(1);
+    /*
+     * set bit 3 in X
+     * set bit D in X
+     * set bit C in X
+     * set bit B in X
+     * */
+    writePin(cDisplayBus_DB7,TRUE);
+    writePin(cDisplayBus_DB6,FALSE);
+    writePin(cDisplayBus_DB5,FALSE);
+    writePin(cDisplayBus_DB4,FALSE);
     // wait
     wait500ns();
     // clear enable
@@ -62,7 +123,48 @@ void displayClear()
     wait500ns();
 }
 
-void displayFunctionSet()
+void displayFunctionSet(const Bool bDots5x10)
+{
+    Byte portB = 0;
+    
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    /*
+     * @write upper byte
+     * read port B to X
+     * clear X with masked backlight and enable
+     * set bit 1 in X
+     * write X to port B 
+     * */
+    readPortB(&portB);
+    portB = portB & cMaskBacklighAndEnable;
+    writePortB(portB);
+    writePin(cDisplayBus_DB5,TRUE);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+    
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    /*
+     * @write lower byte
+     * set bit N in X
+     * set bit F in X
+     * */
+    writePin(cDisplayBus_DB7,TRUE);
+    writePin(cDisplayBus_DB6,bDots5x10);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+}
+
+void displayEntryModeSet()
 {
     // todo
 }

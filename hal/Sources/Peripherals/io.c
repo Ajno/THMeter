@@ -202,3 +202,8 @@ void readPin(const pin_t idx, Bool* pValue)
 		*pValue = PTBD_PTBD7;
 	}
 }
+
+void readPortB(Byte* pValue)
+{
+    *pValue = PTBD;
+}
