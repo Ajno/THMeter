@@ -10,9 +10,7 @@
 #include "io.h"
 #include "timer.h"
 
-static const Byte cMaskBacklighAndEnable = 0x30;
-
-enum displayBus
+enum displayBus_t
 {
     cDisplayBus_DB4         = cPin_B0,
     cDisplayBus_DB5         = cPin_B1,
@@ -24,6 +22,23 @@ enum displayBus
     cDisplayBus_RS          = cPin_B7
 };
 
+typedef struct
+{
+    Bool    bDisplayOn;
+    Bool    bCursorOn;
+    Bool    bBlinkingCursorOn;
+}displayOnOffControl_t;
+
+typedef struct
+{
+    Bool    bCursorDirectionForward;
+    Bool    bAutomaticShiftOfDisplay;
+}displayMovingDirection_t;
+
+static const Byte cMask_Backligh = 0x10;
+
+static Bool bDataBusConfiguredAsOutput = FALSE;
+
 void displayInit()
 {
     pinConfig_t pinCfg;
@@ -32,6 +47,7 @@ void displayInit()
 
     pinCfg.bOutput = TRUE;
     configurePortB(pinCfg);
+    bDataBusConfiguredAsOutput = TRUE;
 
     chnlCfg.mode = cPwmMode_edgeAligned_clear;
     configurePwmChannel(chnlCfg);
@@ -43,35 +59,29 @@ void displayBackLightOn(const Bool bBackLightOn)
     writePin(cDisplayBus_backLight, bBackLightOn);
 }
 
-void displayClear()
+void displayPrepareBusForWrite()
 {
     Byte portB = 0;
+    pinConfig_t pinCfg;
     
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    /*
-     *  @write upper byte
-     * read port B to X
-     * clear X with masked backlight and enable
-     * write X to port B 
-     * */
+    if (!bDataBusConfiguredAsOutput)
+    {
+        pinCfg.bOutput = TRUE;
+        configurePin(cDisplayBus_DB4,pinCfg);
+        configurePin(cDisplayBus_DB5,pinCfg);
+        configurePin(cDisplayBus_DB6,pinCfg);
+        configurePin(cDisplayBus_DB7,pinCfg);
+    }
+    // clear port B except backlight
     readPortB(&portB);
-    portB = portB & cMaskBacklighAndEnable;
+    portB = portB & cMask_Backligh;
     writePortB(portB);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
-    
+}
+
+void displayToggleEnable()
+{
     // set enable
     writePin(cDisplayBus_E,TRUE);
-    /*
-     * @write lower byte
-     * set bit 0 port B 
-     * */
-    writePin(cDisplayBus_DB4, TRUE);
     // wait
     wait500ns();
     // clear enable
@@ -80,66 +90,42 @@ void displayClear()
     wait500ns();
 }
 
-void displayOnOffControl()
+void displayClear()
 {
-    Byte portB = 0;
+    displayPrepareBusForWrite();
+    displayToggleEnable();
     
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    /*
-     *  @write upper byte
-     * read port B to X
-     * clear X with masked backlight and enable
-     * write X to port B 
-     * */
-    readPortB(&portB);
-    portB = portB & cMaskBacklighAndEnable;
-    writePortB(portB);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    // set bit 0
+    writePin(cDisplayBus_DB4, TRUE);
+    displayToggleEnable();
+}
+
+void displayOnOffControl(const displayOnOffControl_t cControl)
+{
+    displayPrepareBusForWrite();
+    displayToggleEnable();
     
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    // write lower byte
-    /*
+    /* 
+     * write lower byte
      * set bit 3 in X
      * set bit D in X
      * set bit C in X
      * set bit B in X
      * */
     writePin(cDisplayBus_DB7,TRUE);
-    writePin(cDisplayBus_DB6,FALSE);
-    writePin(cDisplayBus_DB5,FALSE);
-    writePin(cDisplayBus_DB4,FALSE);
-    // wait
-    wait500ns();
-    // clear enable
-    writePin(cDisplayBus_E,FALSE);
-    // wait
-    wait500ns();
+    writePin(cDisplayBus_DB6,cControl.bDisplayOn);
+    writePin(cDisplayBus_DB5,cControl.bCursorOn);
+    writePin(cDisplayBus_DB4,cControl.bBlinkingCursorOn);
+    displayToggleEnable();
 }
 
-void displayFunctionSet(const Bool bDots5x10)
+void displayFunctionSet()
 {
-    Byte portB = 0;
-    
-    // set enable
-    writePin(cDisplayBus_E,TRUE);
-    /*
-     * @write upper byte
-     * read port B to X
-     * clear X with masked backlight and enable
-     * set bit 1 in X
-     * write X to port B 
-     * */
-    readPortB(&portB);
-    portB = portB & cMaskBacklighAndEnable;
-    writePortB(portB);
+    displayPrepareBusForWrite();
+    // set bit 1 of higher byte
     writePin(cDisplayBus_DB5,TRUE);
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
     // wait
     wait500ns();
     // clear enable
@@ -147,15 +133,10 @@ void displayFunctionSet(const Bool bDots5x10)
     // wait
     wait500ns();
     
+    // write lower byte, set bit N in X,  bit F has no meaning when N is set
+    writePin(cDisplayBus_DB7,TRUE);
     // set enable
     writePin(cDisplayBus_E,TRUE);
-    /*
-     * @write lower byte
-     * set bit N in X
-     * set bit F in X
-     * */
-    writePin(cDisplayBus_DB7,TRUE);
-    writePin(cDisplayBus_DB6,bDots5x10);
     // wait
     wait500ns();
     // clear enable
@@ -164,18 +145,83 @@ void displayFunctionSet(const Bool bDots5x10)
     wait500ns();
 }
 
-void displayEntryModeSet()
+void displayEntryModeSet(const displayMovingDirection_t cSetting)
 {
-    // todo
+    displayPrepareBusForWrite();
+    // set bit 2 in higher byte
+    writePin(cDisplayBus_DB6,TRUE);
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+    
+    // write lower byte, set bit ID, set bit S
+    writePin(cDisplayBus_DB5, cSetting.bCursorDirectionForward);
+    writePin(cDisplayBus_DB4,cSetting.bAutomaticShiftOfDisplay);
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+}
+
+void displayReadBusyAndAddress()
+{
+    pinConfig_t pinCfg;
+    
+    if (bDataBusConfiguredAsOutput)
+    {
+        // configure data bits as inputs
+        pinCfg.bOutput = FALSE;
+        pinCfg.bPullUp = TRUE;
+        configurePin(cDisplayBus_DB4,pinCfg);
+        configurePin(cDisplayBus_DB5,pinCfg);
+        configurePin(cDisplayBus_DB6,pinCfg);
+        configurePin(cDisplayBus_DB7,pinCfg);        
+    }
+    // clear RS
+    writePin(cDisplayBus_RS,FALSE);
+    // set RW
+    writePin(cDisplayBus_RW,TRUE);
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+    // read upper byte
+    //todo
+    
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    // wait
+    wait500ns();
+    // clear enable
+    writePin(cDisplayBus_E,FALSE);
+    // wait
+    wait500ns();
+    // read lower byte
+    //todo
 }
 
 void displayFirstStart()
 {
     const Word cSet_DB5     = 2;
     const Word cSet_DB4_DB5 = 3;
+    displayOnOffControl_t onOffSetting;
+    displayMovingDirection_t dirSetting;
     
-    // wait 40 ms
-    waitX100us(400);
+    // wait 45 ms
+    waitX100us(450);
     
     // set enable
     writePin(cDisplayBus_E,TRUE);
@@ -233,14 +279,19 @@ void displayFirstStart()
     //number of display lines and character font.)
     //The number of display lines and character font
     //cannot be changed after this point.
-    // todo
+    displayFunctionSet();
     
     //Display off
-    // todo
+    onOffSetting.bDisplayOn = FALSE;
+    onOffSetting.bCursorOn = FALSE;
+    onOffSetting.bBlinkingCursorOn = FALSE;
+    displayOnOffControl(onOffSetting);
     
     //Display clear
-    // todo
+    displayClear();
     
     //Entry mode set
-    // todo    
+    dirSetting.bCursorDirectionForward = TRUE;
+    dirSetting.bAutomaticShiftOfDisplay = FALSE;
+    displayEntryModeSet(dirSetting);
 }
