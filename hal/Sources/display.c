@@ -22,25 +22,6 @@ enum displayBus_t
     cDisplayBus_RS          = cPin_B7
 };
 
-typedef struct
-{
-    Bool    bDisplayOn;
-    Bool    bCursorOn;
-    Bool    bBlinkingCursorOn;
-}displayOnOffControl_t;
-
-typedef struct
-{
-    Bool    bCursorDirectionForward;
-    Bool    bAutomaticShiftOfDisplay;
-}displayAutomaticMovingDirection_t;
-
-typedef struct
-{
-    Bool    bShiftDisplayInsteadOfCursor;
-    Bool    bShiftForward;
-}displayShiftDirection_t;
-
 static const Byte cMask_Backligh = 0x10;
 
 static Bool bDataBusConfiguredAsOutput = FALSE;
@@ -107,6 +88,16 @@ void displayClear()
     displayToggleEnable();
 }
 
+void displayReturnHome()
+{
+    displayPrepareBusForWrite();
+    displayToggleEnable();
+    
+    // set bit 1
+    writePin(cDisplayBus_DB5, TRUE);
+    displayToggleEnable();
+}
+
 void displayOnOffControl(const displayOnOffControl_t cControl)
 {
     displayPrepareBusForWrite();
@@ -126,15 +117,15 @@ void displayOnOffControl(const displayOnOffControl_t cControl)
     displayToggleEnable();
 }
 
-void displayOrCursorShift(const displayShiftDirection_t cSetting)
+void displayOrCursorShift(const displayMovingDirection_t cSetting)
 {
     displayPrepareBusForWrite();
     writePin(cDisplayBus_DB4, TRUE);
     displayToggleEnable();
     
     // write lower 4 bits, set S/C, set R/L
-    writePin(cDisplayBus_DB7, cSetting.bShiftDisplayInsteadOfCursor);
-    writePin(cDisplayBus_DB6, cSetting.bShiftForward);
+    writePin(cDisplayBus_DB7, cSetting.bShiftScreenInsteadOfCursor);
+    writePin(cDisplayBus_DB6, cSetting.bShiftRightInsteadOfLeft);
     displayToggleEnable();
 }
 
@@ -150,7 +141,7 @@ void displayFunctionSet()
     displayToggleEnable();
 }
 
-void displayEntryModeSet(const displayAutomaticMovingDirection_t cSetting)
+void displayEntryModeSet(const displayMovingDirection_t cSetting)
 {
     displayPrepareBusForWrite();
     // set bit 2 in higher byte
@@ -158,12 +149,32 @@ void displayEntryModeSet(const displayAutomaticMovingDirection_t cSetting)
     displayToggleEnable();
     
     // write lower 4 bits, set bit ID, set bit S
-    writePin(cDisplayBus_DB5, cSetting.bCursorDirectionForward);
-    writePin(cDisplayBus_DB4,cSetting.bAutomaticShiftOfDisplay);
+    writePin(cDisplayBus_DB5, cSetting.bShiftRightInsteadOfLeft);
+    writePin(cDisplayBus_DB4,cSetting.bShiftScreenInsteadOfCursor);
     displayToggleEnable();
 }
 
-void displayReadBusyAndAddress(Byte* pData)
+void displayWriteDataRam(const Byte cData)
+{
+    Byte portB = 0;
+    
+    displayPrepareBusForWrite();
+    // set RS
+    writePin(cDisplayBus_RS, TRUE);
+    // write upper 4 bits
+    readPortB(&portB);
+    portB = portB | ((cData >> 4) & 0x0F);
+    writePortB(portB);
+    displayToggleEnable();
+    
+    // write lower 4 bits
+    portB = portB & 0xF0;
+    portB = portB | (cData & 0x0F);
+    writePortB(portB);
+    displayToggleEnable();
+}
+
+void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
 {
     pinConfig_t pinCfg;
     Byte upperBits = 0;
@@ -186,19 +197,20 @@ void displayReadBusyAndAddress(Byte* pData)
     writePin(cDisplayBus_RW,TRUE);
     displayToggleEnable();
     // read upper 4 bits
+    readPin(cDisplayBus_DB7, pBusy);
     readPortB(&upperBits);
-    upperBits = (upperBits << 4);
+    upperBits = ((upperBits << 4) & 0x70);
     
     displayToggleEnable();
     // read lower 4 bits
     readPortB(&lowerBits); 
-    *pData = (lowerBits & 0x0F) | (upperBits & 0xF0);
+    *pAddress = (lowerBits & 0x0F) | (upperBits & 0xF0);
 }
 
 void displayFirstStart()
 {
     displayOnOffControl_t onOffSetting;
-    displayAutomaticMovingDirection_t dirSetting;
+    displayMovingDirection_t dirSetting;
     
     // wait 45 ms
     waitX100us(450);
@@ -243,7 +255,7 @@ void displayFirstStart()
     displayClear();
     
     //Entry mode set
-    dirSetting.bCursorDirectionForward = TRUE;
-    dirSetting.bAutomaticShiftOfDisplay = FALSE;
+    dirSetting.bShiftRightInsteadOfLeft = TRUE;
+    dirSetting.bShiftScreenInsteadOfCursor = FALSE;
     displayEntryModeSet(dirSetting);
 }
