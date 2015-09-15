@@ -35,8 +35,8 @@ void wait500ns()
 
 void waitX100us(const Word cDelay)
 {
-	Word t1 = 0;
-	Word t2 = 0;
+	volatile Word t1 = 0;
+	volatile Word t2 = 0;
 	
 	t1 = readPwmTimer();
 	ovrflwCount = cDelay;

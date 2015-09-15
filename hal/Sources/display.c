@@ -30,7 +30,7 @@ void displayInit()
 {
     pinConfig_t pinCfg;
     pwmChannelConfig_t chnlCfg;
-    const Word cChannelValue = (readPwmModulo() / 100) * 16;
+    const Word cChannelValue = (readPwmModulo() / 100) * 5;
 
     pinCfg.bOutput = TRUE;
     configurePortB(pinCfg);
@@ -71,11 +71,11 @@ void displayToggleEnable()
     // set enable
     writePin(cDisplayBus_E,TRUE);
     // wait
-    wait500ns();
+    wait500ns();wait500ns();
     // clear enable
     writePin(cDisplayBus_E,FALSE);
     // wait
-    wait500ns();
+    wait500ns();wait500ns();
 }
 
 void displayClear()
@@ -195,6 +195,7 @@ void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
     writePin(cDisplayBus_RS,FALSE);
     // set RW
     writePin(cDisplayBus_RW,TRUE);
+    wait500ns();
     displayToggleEnable();
     // read upper 4 bits
     readPin(cDisplayBus_DB7, pBusy);
@@ -238,24 +239,29 @@ void displayFirstStart()
     // write upper 4 bits
     writePin(cDisplayBus_DB4, FALSE);
     displayToggleEnable();
+    waitX100us(1);
     
     //Function set (Interface is 4 bits long. Specify the
     //number of display lines and character font.)
     //The number of display lines and character font
     //cannot be changed after this point.
     displayFunctionSet();
+    waitX100us(1);
     
     //Display off
     onOffSetting.bDisplayOn = FALSE;
     onOffSetting.bCursorOn = FALSE;
     onOffSetting.bBlinkingCursorOn = FALSE;
     displayOnOffControl(onOffSetting);
+    waitX100us(1);
     
     //Display clear
     displayClear();
+    waitX100us(20);
     
     //Entry mode set
     dirSetting.bShiftRightInsteadOfLeft = TRUE;
     dirSetting.bShiftScreenInsteadOfCursor = FALSE;
     displayEntryModeSet(dirSetting);
+    waitX100us(1);
 }
