@@ -54,6 +54,7 @@ void displayPrepareBusForWrite()
     if (!bDataBusConfiguredAsOutput)
     {
         pinCfg.bOutput = TRUE;
+        pinCfg.bPullUp = FALSE;
         configurePin(cDisplayBus_DB4,pinCfg);
         configurePin(cDisplayBus_DB5,pinCfg);
         configurePin(cDisplayBus_DB6,pinCfg);
@@ -71,11 +72,11 @@ void displayToggleEnable()
     // set enable
     writePin(cDisplayBus_E,TRUE);
     // wait
-    wait500ns();wait500ns();
+    wait500ns();
     // clear enable
     writePin(cDisplayBus_E,FALSE);
     // wait
-    wait500ns();wait500ns();
+    wait500ns();
 }
 
 void displayClear()
@@ -184,7 +185,7 @@ void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
     {
         // configure data bits as inputs
         pinCfg.bOutput = FALSE;
-        pinCfg.bPullUp = TRUE;
+        pinCfg.bPullUp = FALSE;
         configurePin(cDisplayBus_DB4,pinCfg);
         configurePin(cDisplayBus_DB5,pinCfg);
         configurePin(cDisplayBus_DB6,pinCfg);
@@ -196,16 +197,38 @@ void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
     // set RW
     writePin(cDisplayBus_RW,TRUE);
     wait500ns();
-    displayToggleEnable();
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    wait500ns();
     // read upper 4 bits
     readPin(cDisplayBus_DB7, pBusy);
     readPortB(&upperBits);
-    upperBits = ((upperBits << 4) & 0x70);
+    // clear enable
+    writePin(cDisplayBus_E,TRUE);
+    wait500ns();
     
-    displayToggleEnable();
+    // set enable
+    writePin(cDisplayBus_E,TRUE);
+    wait500ns();
     // read lower 4 bits
     readPortB(&lowerBits); 
+    // clear enable
+    writePin(cDisplayBus_E,TRUE);
+    wait500ns();
+    
+    upperBits = ((upperBits << 4) & 0x70);
     *pAddress = (lowerBits & 0x0F) | (upperBits & 0xF0);
+}
+
+void displayWaitTillNotBusy()
+{
+    Bool bBusy = TRUE;
+    Byte address = 0;
+    
+    do
+    {
+        displayReadBusyAndAddress(&bBusy, &address);
+    } while (bBusy);
 }
 
 void displayFirstStart()
@@ -239,29 +262,29 @@ void displayFirstStart()
     // write upper 4 bits
     writePin(cDisplayBus_DB4, FALSE);
     displayToggleEnable();
-    waitX100us(1);
+    displayWaitTillNotBusy();
     
     //Function set (Interface is 4 bits long. Specify the
     //number of display lines and character font.)
     //The number of display lines and character font
     //cannot be changed after this point.
     displayFunctionSet();
-    waitX100us(1);
+    displayWaitTillNotBusy();
     
     //Display off
     onOffSetting.bDisplayOn = FALSE;
     onOffSetting.bCursorOn = FALSE;
     onOffSetting.bBlinkingCursorOn = FALSE;
     displayOnOffControl(onOffSetting);
-    waitX100us(1);
+    displayWaitTillNotBusy();
     
     //Display clear
     displayClear();
-    waitX100us(20);
+    displayWaitTillNotBusy();
     
     //Entry mode set
     dirSetting.bShiftRightInsteadOfLeft = TRUE;
     dirSetting.bShiftScreenInsteadOfCursor = FALSE;
     displayEntryModeSet(dirSetting);
-    waitX100us(1);
+    displayWaitTillNotBusy();
 }

@@ -18,6 +18,7 @@ void main(void)
 	
 	for (;;)
 	{		
+	    test_display_hello_run();
 		__RESET_WATCHDOG()
 		; /* feeds the dog */
 	} /* loop forever */

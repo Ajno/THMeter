@@ -9,5 +9,6 @@
 #define DISPLAY_TEST_H_
 
 void test_display_hello_init();
+void test_display_hello_run();
 
 #endif /* DISPLAY_TEST_H_ */

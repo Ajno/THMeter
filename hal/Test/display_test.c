@@ -12,8 +12,6 @@
 void test_display_hello_init()
 {
     displayOnOffControl_t onOffSetting;
-    Bool bBusy = TRUE;
-    Byte address = 0;
 
     timerInit();
     displayInit();
@@ -27,43 +25,119 @@ void test_display_hello_init()
     onOffSetting.bBlinkingCursorOn = TRUE;
     displayOnOffControl(onOffSetting);
     // check busy flag
-    do
-    {
-        displayReadBusyAndAddress(&bBusy, &address);
-    } while (bBusy);
+    displayWaitTillNotBusy();
 
     //Display clear
     displayClear();
-    waitX100us(20);
+    displayWaitTillNotBusy();
 
-    displayWriteDataRam('A');
-    waitX100us(1);
+    displayWriteDataRam('a');
+    displayWaitTillNotBusy();
     displayWriteDataRam('h');
-    waitX100us(1);
+    displayWaitTillNotBusy();
     displayWriteDataRam('o');
-    waitX100us(1);
+    displayWaitTillNotBusy();
     displayWriteDataRam('j');
-    waitX100us(1);
-
+    displayWaitTillNotBusy();    
     displayWriteDataRam(' ');
-    waitX100us(1);
-
-    displayWriteDataRam('P');
-    waitX100us(1);
+    displayWriteDataRam('t');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('o');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('t');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('o');
+    displayWaitTillNotBusy();
+    displayWriteDataRam(' ');
+    displayWriteDataRam('j');
+    displayWaitTillNotBusy();
     displayWriteDataRam('e');
-    waitX100us(1);
-    displayWriteDataRam('r');
-    waitX100us(1);
-    displayWriteDataRam('n');
-    waitX100us(1);
-    displayWriteDataRam('i');
-    waitX100us(1);
-    displayWriteDataRam('c');
-    waitX100us(1);
-    displayWriteDataRam('k');
-    waitX100us(1);
-    displayWriteDataRam('u');
-    waitX100us(1);
-    displayWriteDataRam('!');
-    waitX100us(1);
+    displayWaitTillNotBusy();
+    displayWriteDataRam(' ');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('t');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('e');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('s');
+    displayWaitTillNotBusy();    
+    displayWriteDataRam('t');
+    displayWaitTillNotBusy();
+    displayWriteDataRam(' ');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('1');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('2');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('3');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('4');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('5');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('6');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('7');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('8');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('9');
+    displayWaitTillNotBusy();
+    displayWriteDataRam(' ');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('*');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('*');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('.');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('.');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('.');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('.');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('.');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('*');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('*');
+    displayWaitTillNotBusy();
+    displayWriteDataRam(' ');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('~');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('@');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('#');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('$');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('%');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('&');
+    displayWaitTillNotBusy();
+    displayWriteDataRam(')');
+    displayWaitTillNotBusy();
+    displayWriteDataRam('(');
+    displayWaitTillNotBusy();
+}
+
+void test_display_hello_run()
+{
+    displayMovingDirection_t dir;
+    static Word cntr = 0;
+    
+    waitX100us(500); // wait 50 ms
+    cntr++;
+    if (cntr >= 20)
+    {        
+        dir.bShiftRightInsteadOfLeft = FALSE;
+        dir.bShiftScreenInsteadOfCursor = TRUE;
+        displayOrCursorShift(dir);
+        displayWaitTillNotBusy();
+        cntr = 0;
+    }
 }

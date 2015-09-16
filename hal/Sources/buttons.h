@@ -10,7 +10,7 @@
 
 #include "io.h"
 
-static const pin_t BUTTON_UPP 	= cPin_A1;
-static const pin_t BUTTON_LOW 	= cPin_A2;
+static const pin_t cButton_Upper 	= cPin_A1;
+static const pin_t cButton_Lower 	= cPin_A2;
 
 #endif /* BUTTONS_H_ */
