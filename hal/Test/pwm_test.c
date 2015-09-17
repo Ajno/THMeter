@@ -9,24 +9,24 @@
 
 static struct
 {
-    pin_t ledIdx;
+    io_t ledIdx;
     Bool bLedOn;
 } test_timer =
 { cPin_B7, FALSE, };
 
 static void isr_timer()
 {
-    writePin(test_timer.ledIdx, test_timer.bLedOn);
+    ioWrite(test_timer.ledIdx, test_timer.bLedOn);
     test_timer.bLedOn = !test_timer.bLedOn;
 }
 
 /*
  * PWM timer
  */
-void test_pwm_timer_init(const pin_t cPin)
+void test_pwm_timer_init(const io_t cPin)
 {
-    pinConfig_t outputCfg;
-    configPwmTimer_t pwmCfg;
+    ioConfig_t outputCfg;
+    pwmTimerConfig_t pwmCfg;
 
     test_timer.ledIdx = cPin;
     test_timer.bLedOn = FALSE;
@@ -36,9 +36,9 @@ void test_pwm_timer_init(const pin_t cPin)
     pwmCfg.clock = cPwmClk_bus;	// 4MHz
     pwmCfg.prescaler = cPwmPrsclr_32; // 4M/32=125k
 
-    configurePin(test_timer.ledIdx, outputCfg);
-    configurePwmTimer(pwmCfg);
-    installPwmTimerIsr(isr_timer);
+    ioConfigure(test_timer.ledIdx, outputCfg);
+    pwmConfigureTimer(pwmCfg);
+    pwmInstallTimerIsrCallback(isr_timer);
 }
 
 /*
@@ -56,7 +56,7 @@ static struct
         };
 void test_pwm_chnl_init(const Word cSpeed)
 {
-    configPwmTimer_t cfgTimer =
+    pwmTimerConfig_t cfgTimer =
     { 0 };
     pwmChannelConfig_t cfgChannel =
     { 0 };
@@ -70,10 +70,10 @@ void test_pwm_chnl_init(const Word cSpeed)
     cfgTimer.prescaler = cPwmPrsclr_1; // 4M
     cfgChannel.mode = cPwmMode_edgeAligned_clear;
 
-    writePwmModulo(MODULO); //2kHz PWM
-    configurePwmTimer(cfgTimer);
-    configurePwmChannel(cfgChannel);
-    writePwmChannel(MODULO * 0.1625); //0.1625 duty
+    pwmWriteModulo(MODULO); //2kHz PWM
+    pwmConfigureTimer(cfgTimer);
+    pwmConfigureChannel(cfgChannel);
+    pwmWriteChannel(MODULO * 0.1625); //0.1625 duty
 }
 
 void test_pwm_chnl_run()
@@ -97,6 +97,6 @@ void test_pwm_chnl_run()
             }
         }
 
-        writePwmChannel(test_chnl.channelValue);
+        pwmWriteChannel(test_chnl.channelValue);
     }
 }

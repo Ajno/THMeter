@@ -13,9 +13,11 @@ static struct
 {
     Word cntr;
     Bool light;
-} test_wait = { 
-        0, 
-        FALSE };
+} test_wait = 
+{ 
+    0, 
+    FALSE 
+};
 
 void test_timer_wait_init()
 {    
@@ -34,4 +36,12 @@ void test_timer_wait_run(const Word cDelayToggle_x100ms)
         displayBackLightOn(test_wait.light);
         test_wait.cntr = 0;
     }
+}
+
+void test_timer_startStop_init()
+{
+    timerInit();
+    displayInit();
+    
+    timerRestart(1000);// 1 sec
 }

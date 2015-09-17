@@ -23,19 +23,19 @@ typedef enum
 	cPin_B5	= 8,
 	cPin_B6	= 9,
 	cPin_B7	= 10
-} pin_t;
+} io_t;
 
 typedef struct
 {
 	Bool bOutput; // output otherwise input?
 	Bool bPullUp; // internal pull-up enabled?		
-}pinConfig_t;
+}ioConfig_t;
 
-void configurePin(const pin_t idx, const pinConfig_t config);
-void configurePortB(const pinConfig_t config);
-void writePin(const pin_t idx, const Bool value);
-void writePortB(const Byte cValue);
-void readPortB(Byte* pValue);
-void readPin(const pin_t idx, Bool* pValue);
+void ioConfigure(const io_t idx, const ioConfig_t config);
+void ioConfigurePortB(const ioConfig_t config);
+void ioWrite(const io_t idx, const Bool value);
+void ioWritePortB(const Byte cValue);
+void ioReadPortB(Byte* pValue);
+void ioRead(const io_t idx, Bool* pValue);
 
 #endif /* IO_PINS_H_ */

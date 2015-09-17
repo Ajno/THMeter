@@ -10,10 +10,10 @@
 
 #include "io.h"
 
-const pin_t LED_1 = cPin_B6;
-const pin_t LED_2 = cPin_B7;
+const io_t LED_1 = cPin_B6;
+const io_t LED_2 = cPin_B7;
 
-const pin_t SW_1 = cPin_A2;
-const pin_t SW_2 = cPin_A3;
+const io_t SW_1 = cPin_A2;
+const io_t SW_2 = cPin_A3;
 
 #endif /* DEMO_H_ */

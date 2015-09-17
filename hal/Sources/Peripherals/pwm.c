@@ -9,9 +9,9 @@
 #include <derivative.h>
 
 static Bool bIsrClbckInstalled = FALSE;
-static pInterruptCallback_t pIsrClbck;
+static pPwmInterruptCallback_t pIsrClbck;
 
-void configurePwmTimer(const configPwmTimer_t cfg)
+void pwmConfigureTimer(const pwmTimerConfig_t cfg)
 {
 	// clear register
 	TPMSC = 0;
@@ -21,40 +21,50 @@ void configurePwmTimer(const configPwmTimer_t cfg)
 	TPMSC_CLKSx = cfg.clock;
 }
 
-void configurePwmChannel(const pwmChannelConfig_t cfg)
+void pwmConfigureChannel(const pwmChannelConfig_t cfg)
 {
 	// channel 0
 	TPMC0SC = TPMC0SC | (cfg.mode << TPMC0SC_ELS0x_BITNUM);
 //	TPMC0SC_CH0IE = cfg.chnnl0.bChannelInterruptEnable;
 }
 
-Word readPwmTimer()
+void pwmSetOverflowInterruptEnable(const Bool bEnable)
+{
+    TPMSC_TOIE = bEnable;
+}
+
+Word pwmReadTimer()
 {
 	return TPMCNT;
 }
 
-Word readPwmModulo()
+Word pwmReadModulo()
 {
 	return TPMMOD;
 }
 
-void writePwmModulo(const Word modulo)
+void pwmWriteModulo(const Word modulo)
 {
 	TPMMOD = modulo;
 }
 
-void writePwmChannel(const Word value)
+void pwmWriteChannel(const Word value)
 {
 	TPMC0V = value;
 }
 
-void installPwmTimerIsr(pInterruptCallback_t pcIsrClbck)
+void pwmInstallTimerIsrCallback(pPwmInterruptCallback_t const pcIsrClbck)
 {
 	if (0 != pcIsrClbck)
 	{
 		pIsrClbck = pcIsrClbck;
 		bIsrClbckInstalled = TRUE;
 	}
+}
+
+void pwmClearTimer()
+{
+    TPMCNTH = 0;
 }
 
 void __interrupt VectorNumber_Vtpmovf isr_timerOverflow(void)

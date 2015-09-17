@@ -10,17 +10,17 @@
 static struct
 {
 	Bool 	val;
-	pin_t 	idx;
+	io_t 	idx;
 	Word 	cntr;
 }test_out;
 
-void test_io_output_init(const pin_t cPin)
+void test_io_output_init(const io_t cPin)
 {
-	pinConfig_t outputCfg;
+	ioConfig_t outputCfg;
 	outputCfg.bOutput = TRUE;
 	test_out.val = FALSE;
 	
-	configurePin(cPin, outputCfg);
+	ioConfigure(cPin, outputCfg);
 
 	test_out.idx = cPin;
 	test_out.cntr = 0;
@@ -33,21 +33,21 @@ void test_io_output_run()
 	if (toogle < test_out.cntr)
 	{			
 		(FALSE == test_out.val) ? (test_out.val = TRUE):(test_out.val = FALSE);
-		writePin(test_out.idx,test_out.val);
+		ioWrite(test_out.idx,test_out.val);
 		test_out.cntr = 0;
 	}
 }
 
 static struct 
 {
-	pin_t	inIdx;
-	pin_t	outIdx;
+	io_t	inIdx;
+	io_t	outIdx;
 }test_inOut;
 
-void test_io_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
+void test_io_inputOutput_init(const io_t cInPin, const io_t cOutPin)
 {
-	pinConfig_t inputCfg;
-	pinConfig_t outputCfg;
+	ioConfig_t inputCfg;
+	ioConfig_t outputCfg;
 	
 	inputCfg.bOutput = FALSE;
 	inputCfg.bPullUp = TRUE;	
@@ -56,13 +56,13 @@ void test_io_inputOutput_init(const pin_t cInPin, const pin_t cOutPin)
 	test_inOut.inIdx = cInPin;
 	test_inOut.outIdx = cOutPin;
 	
-	configurePin(test_inOut.inIdx, inputCfg);
-	configurePin(test_inOut.outIdx, outputCfg);
+	ioConfigure(test_inOut.inIdx, inputCfg);
+	ioConfigure(test_inOut.outIdx, outputCfg);
 }
 
 void test_io_inputOutput_run()
 {
 	auto Bool value = FALSE;
-	readPin(test_inOut.inIdx,&value);
-	writePin(test_inOut.outIdx,value);
+	ioRead(test_inOut.inIdx,&value);
+	ioWrite(test_inOut.outIdx,value);
 }

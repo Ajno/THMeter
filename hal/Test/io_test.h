@@ -10,10 +10,10 @@
 
 #include "io.h"
 
-void test_io_output_init(const pin_t pin);
+void test_io_output_init(const io_t pin);
 void test_io_output_run();
 
-void test_io_inputOutput_init(const pin_t cInPin, const pin_t cOutPin);
+void test_io_inputOutput_init(const io_t cInPin, const io_t cOutPin);
 void test_io_inputOutput_run();
 
 #endif /* IO_TEST_H_ */

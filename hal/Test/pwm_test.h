@@ -14,7 +14,7 @@
 /*
  * change output on cPin every ~ 0,5s (bus freq = 4MHz)
  */
-void test_pwm_timer_init(const pin_t cPin);
+void test_pwm_timer_init(const io_t cPin);
 
 /*
  * changing duty cycle output on pin TPMCH0

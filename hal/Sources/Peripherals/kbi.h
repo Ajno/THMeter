@@ -23,10 +23,10 @@ typedef struct
 	Bool bPullUp; // enable internal pullup resistor for the pin?
 }kbiConfig_t;
 
-typedef void (*pInterruptCallback_t)(void);
+typedef void (*pKbiInterruptCallback_t)(void);
 
-void configureKbi(const kbiPin_t idx, const kbiConfig_t config);
-void disableKbi();
-void installIsr(pInterruptCallback_t pcIsrClbck);
+void kbiConfigure(const kbiPin_t idx, const kbiConfig_t config);
+void kbiDisable();
+void kbiIsrInstall(pKbiInterruptCallback_t pcIsrClbck);
 
 #endif /* KBI_H_ */

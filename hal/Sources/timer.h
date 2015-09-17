@@ -13,5 +13,7 @@
 void timerInit();
 void wait500ns();
 void waitX100us(const Word cDelay);
+void timerRestart(const Word cTimeout_ms);
+Bool timerElapsed();
 
 #endif /* TIMER_H_ */

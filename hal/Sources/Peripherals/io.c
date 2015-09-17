@@ -22,7 +22,7 @@ Byte boolToByte(const Bool cBool)
 	}
 }
 
-void configurePin(const pin_t idx, const pinConfig_t config)
+void ioConfigure(const io_t idx, const ioConfig_t config)
 {
 	if (cPin_A1 == idx)
 	{
@@ -81,7 +81,7 @@ void configurePin(const pin_t idx, const pinConfig_t config)
 	}
 }
 
-void configurePortB(const pinConfig_t config)
+void ioConfigurePortB(const ioConfig_t config)
 {
     if (config.bOutput)
     {
@@ -102,7 +102,7 @@ void configurePortB(const pinConfig_t config)
     }
 }
 
-void writePin(const pin_t idx, const Bool value)
+void ioWrite(const io_t idx, const Bool value)
 {
 	if (cPin_A1 == idx)
 	{
@@ -150,12 +150,12 @@ void writePin(const pin_t idx, const Bool value)
 	}
 }
 
-void writePortB(const Byte cValue)
+void ioWritePortB(const Byte cValue)
 {
     PTBD = cValue;
 }
 
-void readPin(const pin_t idx, Bool* pValue)
+void ioRead(const io_t idx, Bool* pValue)
 {
 	if (cPin_A1 == idx)
 	{
@@ -203,7 +203,7 @@ void readPin(const pin_t idx, Bool* pValue)
 	}
 }
 
-void readPortB(Byte* pValue)
+void ioReadPortB(Byte* pValue)
 {
     *pValue = PTBD;
 }

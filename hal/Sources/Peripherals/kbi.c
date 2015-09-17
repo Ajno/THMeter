@@ -10,7 +10,7 @@
 #include <derivative.h>
 
 static Bool bIsrClbckInstalled = FALSE;
-static pInterruptCallback_t pIsrClbck;
+static pKbiInterruptCallback_t pIsrClbck;
 
 static const Byte cKbiIn2PinEnableMask[cKbiIn_P3 + 1] = 
 {
@@ -33,9 +33,9 @@ static const Byte cKbiIn2PinIdx[cKbiIn_P3 + 1] =
 	cPin_A3// cKbiIn_P3
 };
 
-void configureKbi(const kbiPin_t idx, const kbiConfig_t config)
+void kbiConfigure(const kbiPin_t idx, const kbiConfig_t config)
 {
-	pinConfig_t pin;
+	ioConfig_t pin;
 	pin.bPullUp = config.bPullUp;
 	pin.bOutput = FALSE;
 	//	1. Mask keyboard interrupts by clearing KBIE in KBISC.
@@ -46,7 +46,7 @@ void configureKbi(const kbiPin_t idx, const kbiConfig_t config)
 		KBIES |= cKbiIn2EdgeSelectMask[idx];
 	}
 	//	3. If using internal pullup/pulldown device, configure the associated pullup enable bits in PTxPE.
-	configurePin(cKbiIn2PinIdx[idx],pin);
+	ioConfigure(cKbiIn2PinIdx[idx],pin);
 	//	4. Enable the KBI pins by setting the appropriate KBIPEn bits in KBIPE.
 	KBIPE |= cKbiIn2PinEnableMask[idx];
 	//	5. Write to KBACK in KBISC to clear any false interrupts.
@@ -58,7 +58,7 @@ void configureKbi(const kbiPin_t idx, const kbiConfig_t config)
 	}
 }
 
-void installIsr(pInterruptCallback_t pcIsrClbck)
+void installIsr(pKbiInterruptCallback_t pcIsrClbck)
 {
 	if (0 != pcIsrClbck)
 	{
@@ -67,7 +67,7 @@ void installIsr(pInterruptCallback_t pcIsrClbck)
 	}
 }
 
-void disableKbi()
+void kbiDisable()
 {
 	// Mask keyboard interrupts by clearing KBIE in KBISC.
 	KBISC = 0;

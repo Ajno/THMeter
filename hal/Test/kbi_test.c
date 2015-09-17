@@ -14,5 +14,5 @@ void test_kbi_init(const kbiPin_t pin)
 	config.bRisingEdge = FALSE;
 	
 	configureKbi(pin,config);
-	installIsr(&disableKbi);
+	installIsr(&kbiDisable);
 }

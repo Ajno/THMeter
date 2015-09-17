@@ -52,16 +52,18 @@ typedef struct
 	pwmClock_t 		clock;
 	pwmPrescaler_t	prescaler;
 	Bool			bOverflowInterruptEnable;
-} configPwmTimer_t;
+} pwmTimerConfig_t;
 
-typedef void (*pInterruptCallback_t)(void);
+typedef void (*pPwmInterruptCallback_t)(void);
 
-void configurePwmTimer(const configPwmTimer_t cfg);
-void configurePwmChannel(const pwmChannelConfig_t cfg);
-Word readPwmTimer();
-Word readPwmModulo();
-void writePwmModulo(const Word modulo);
-void writePwmChannel(const Word value);
-void installPwmTimerIsr(pInterruptCallback_t pcIsrClbck);
+void pwmConfigureTimer(const pwmTimerConfig_t cfg);
+void pwmConfigureChannel(const pwmChannelConfig_t cfg);
+void pwmSetOverflowInterruptEnable(const Bool bEnable);
+Word pwmReadTimer();
+Word pwmReadModulo();
+void pwmWriteModulo(const Word modulo);
+void pwmWriteChannel(const Word value);
+void pwmClearTimer();
+void pwmInstallTimerIsrCallback(pPwmInterruptCallback_t const pcIsrClbck);
 
 #endif /* PWM_H_ */
