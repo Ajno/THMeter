@@ -26,21 +26,6 @@ static const Byte cMask_Backligh = 0x10;
 
 static Bool bDataBusConfiguredAsOutput = FALSE;
 
-void displayInit()
-{
-    pinConfig_t pinCfg;
-    pwmChannelConfig_t chnlCfg;
-    const Word cChannelValue = (readPwmModulo() / 100) * 5;
-
-    pinCfg.bOutput = TRUE;
-    configurePortB(pinCfg);
-    bDataBusConfiguredAsOutput = TRUE;
-
-    chnlCfg.mode = cPwmMode_edgeAligned_clear;
-    configurePwmChannel(chnlCfg);
-    writePwmChannel(cChannelValue);
-}
-
 void displayBackLightOn(const Bool bBackLightOn)
 {
     writePin(cDisplayBus_backLight, bBackLightOn);
@@ -231,6 +216,11 @@ void displayWaitTillNotBusy()
     } while (bBusy);
 }
 
+void display(uchar* pString)
+{
+    
+}
+
 void displayFirstStart()
 {
     displayOnOffControl_t onOffSetting;
@@ -287,4 +277,21 @@ void displayFirstStart()
     dirSetting.bShiftScreenInsteadOfCursor = FALSE;
     displayEntryModeSet(dirSetting);
     displayWaitTillNotBusy();
+}
+
+void displayInit()
+{
+    pinConfig_t pinCfg;
+    pwmChannelConfig_t chnlCfg;
+    const Word cChannelValue = (readPwmModulo() / 100) * 5 - 2;// todo
+
+    pinCfg.bOutput = TRUE;
+    configurePortB(pinCfg);
+    bDataBusConfiguredAsOutput = TRUE;
+
+    chnlCfg.mode = cPwmMode_edgeAligned_clear;
+    configurePwmChannel(chnlCfg);
+    writePwmChannel(cChannelValue);
+    
+    displayFirstStart();
 }

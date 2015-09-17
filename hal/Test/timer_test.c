@@ -23,12 +23,12 @@ void test_timer_wait_init()
     displayInit();
 }
 
-void test_timer_wait_run(const Word cDelayToggleX100ms)
+void test_timer_wait_run(const Word cDelayToggle_x100ms)
 {    
     waitX100us(1000);//100ms
     test_wait.cntr++;
     
-    if (cDelayToggleX100ms <= test_wait.cntr) 
+    if (cDelayToggle_x100ms <= test_wait.cntr) 
     {
         test_wait.light = !test_wait.light;
         displayBackLightOn(test_wait.light);

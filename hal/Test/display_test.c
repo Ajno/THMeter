@@ -17,7 +17,6 @@ void test_display_hello_init()
     displayInit();
 
     displayBackLightOn(TRUE);
-    displayFirstStart();
 
     // Display on
     onOffSetting.bDisplayOn = TRUE;
