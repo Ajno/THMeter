@@ -26,12 +26,7 @@ static const Byte cMask_Backligh = 0x10;
 
 static Bool bDataBusConfiguredAsOutput = FALSE;
 
-void displayBackLightOn(const Bool bBackLightOn)
-{
-    ioWrite(cDisplayBus_backLight, bBackLightOn);
-}
-
-void displayPrepareBusForWrite()
+static void displayPrepareBusForWrite()
 {
     Byte portB = 0;
     ioConfig_t pinCfg;
@@ -52,7 +47,7 @@ void displayPrepareBusForWrite()
     ioWritePortB(portB);
 }
 
-void displayToggleEnable()
+static void displayToggleEnable()
 {
     // set enable
     ioWrite(cDisplayBus_E,TRUE);
@@ -64,103 +59,7 @@ void displayToggleEnable()
     wait500ns();
 }
 
-void displayClear()
-{
-    displayPrepareBusForWrite();
-    displayToggleEnable();
-    
-    // set bit 0
-    ioWrite(cDisplayBus_DB4, TRUE);
-    displayToggleEnable();
-}
-
-void displayReturnHome()
-{
-    displayPrepareBusForWrite();
-    displayToggleEnable();
-    
-    // set bit 1
-    ioWrite(cDisplayBus_DB5, TRUE);
-    displayToggleEnable();
-}
-
-void displayOnOffControl(const displayOnOffControl_t cControl)
-{
-    displayPrepareBusForWrite();
-    displayToggleEnable();
-    
-    /* 
-     * write lower 4 bits
-     * set bit 3 in X
-     * set bit D in X
-     * set bit C in X
-     * set bit B in X
-     * */
-    ioWrite(cDisplayBus_DB7,TRUE);
-    ioWrite(cDisplayBus_DB6,cControl.bDisplayOn);
-    ioWrite(cDisplayBus_DB5,cControl.bCursorOn);
-    ioWrite(cDisplayBus_DB4,cControl.bBlinkingCursorOn);
-    displayToggleEnable();
-}
-
-void displayOrCursorShift(const displayMovingDirection_t cSetting)
-{
-    displayPrepareBusForWrite();
-    ioWrite(cDisplayBus_DB4, TRUE);
-    displayToggleEnable();
-    
-    // write lower 4 bits, set S/C, set R/L
-    ioWrite(cDisplayBus_DB7, cSetting.bShiftScreenInsteadOfCursor);
-    ioWrite(cDisplayBus_DB6, cSetting.bShiftRightInsteadOfLeft);
-    displayToggleEnable();
-}
-
-void displayFunctionSet()
-{
-    displayPrepareBusForWrite();
-    // set bit 1 of higher byte
-    ioWrite(cDisplayBus_DB5,TRUE);
-    displayToggleEnable();
-    
-    // write lower 4 bits, set bit N in X,  bit F has no meaning when N is set
-    ioWrite(cDisplayBus_DB7,TRUE);
-    displayToggleEnable();
-}
-
-void displayEntryModeSet(const displayMovingDirection_t cSetting)
-{
-    displayPrepareBusForWrite();
-    // set bit 2 in higher byte
-    ioWrite(cDisplayBus_DB6,TRUE);
-    displayToggleEnable();
-    
-    // write lower 4 bits, set bit ID, set bit S
-    ioWrite(cDisplayBus_DB5, cSetting.bShiftRightInsteadOfLeft);
-    ioWrite(cDisplayBus_DB4,cSetting.bShiftScreenInsteadOfCursor);
-    displayToggleEnable();
-}
-
-void displayWriteDataRam(const Byte cData)
-{
-    Byte portB = 0;
-    
-    displayPrepareBusForWrite();
-    // set RS
-    ioWrite(cDisplayBus_RS, TRUE);
-    // write upper 4 bits
-    ioReadPortB(&portB);
-    portB = portB | ((cData >> 4) & 0x0F);
-    ioWritePortB(portB);
-    displayToggleEnable();
-    
-    // write lower 4 bits
-    portB = portB & 0xF0;
-    portB = portB | (cData & 0x0F);
-    ioWritePortB(portB);
-    displayToggleEnable();
-}
-
-void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
+static void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
 {
     ioConfig_t pinCfg;
     Byte upperBits = 0;
@@ -205,7 +104,7 @@ void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress)
     *pAddress = (lowerBits & 0x0F) | (upperBits & 0xF0);
 }
 
-void displayWaitTillNotBusy()
+static void displayWaitTillNotBusy()
 {
     Bool bBusy = TRUE;
     Byte address = 0;
@@ -216,18 +115,155 @@ void displayWaitTillNotBusy()
     } while (bBusy);
 }
 
+void displayClear()
+{
+    displayPrepareBusForWrite();
+    displayToggleEnable();
+    
+    // set bit 0
+    ioWrite(cDisplayBus_DB4, TRUE);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+void displayReturnHome()
+{
+    displayPrepareBusForWrite();
+    displayToggleEnable();
+    
+    // set bit 1
+    ioWrite(cDisplayBus_DB5, TRUE);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+void displayOnOffControl(const displayOnOffControl_t cControl)
+{
+    displayPrepareBusForWrite();
+    displayToggleEnable();
+    
+    /* 
+     * write lower 4 bits
+     * set bit 3 in X
+     * set bit D in X
+     * set bit C in X
+     * set bit B in X
+     * */
+    ioWrite(cDisplayBus_DB7,TRUE);
+    ioWrite(cDisplayBus_DB6,cControl.bDisplayOn);
+    ioWrite(cDisplayBus_DB5,cControl.bCursorOn);
+    ioWrite(cDisplayBus_DB4,cControl.bBlinkingCursorOn);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+void displayOrCursorShift(const displayMovingDirection_t cSetting)
+{
+    displayPrepareBusForWrite();
+    ioWrite(cDisplayBus_DB4, TRUE);
+    displayToggleEnable();
+    
+    // write lower 4 bits, set S/C, set R/L
+    ioWrite(cDisplayBus_DB7, cSetting.bShiftScreenInsteadOfCursor);
+    ioWrite(cDisplayBus_DB6, cSetting.bShiftRightInsteadOfLeft);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+static void displayFunctionSet()
+{
+    displayPrepareBusForWrite();
+    // set bit 1 of higher byte
+    ioWrite(cDisplayBus_DB5,TRUE);
+    displayToggleEnable();
+    
+    // write lower 4 bits, set bit N in X,  bit F has no meaning when N is set
+    ioWrite(cDisplayBus_DB7,TRUE);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+void displayEntryModeSet(const displayMovingDirection_t cSetting)
+{
+    displayPrepareBusForWrite();
+    // set bit 2 in higher 4 bits
+    ioWrite(cDisplayBus_DB6,TRUE);
+    displayToggleEnable();
+    
+    // write lower 4 bits, set bit ID, set bit S
+    ioWrite(cDisplayBus_DB5, cSetting.bShiftRightInsteadOfLeft);
+    ioWrite(cDisplayBus_DB4,cSetting.bShiftScreenInsteadOfCursor);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+static void displayWriteDDRAM(const Byte cData)
+{
+    Byte portB = 0;
+    
+    displayPrepareBusForWrite();
+    // set RS
+    ioWrite(cDisplayBus_RS, TRUE);
+    // write upper 4 bits
+    ioReadPortB(&portB);
+    portB = portB | ((cData >> 4) & 0x0F);
+    ioWritePortB(portB);
+    displayToggleEnable();
+    
+    // write lower 4 bits
+    portB = portB & 0xF0;
+    portB = portB | (cData & 0x0F);
+    ioWritePortB(portB);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
+void displayMoveCursor(const Byte cAddress)
+{
+    Byte portB = 0;
+    
+    displayPrepareBusForWrite();
+    // set bit 4 in higher 4 bits
+    ioWrite(cDisplayBus_DB7,TRUE);
+    // write upper 4 bits
+    ioReadPortB(&portB);
+    portB |= ((cAddress >> 4) & 0x07);
+    ioWritePortB(portB);
+    displayToggleEnable();
+    
+    // write lower 4 bits
+    portB = portB & 0xF0;
+    portB |= (cAddress & 0x0F);
+    ioWritePortB(portB);
+    displayToggleEnable();
+    
+    displayWaitTillNotBusy();
+}
+
 void displayWrite(const uchar* pString)
 {
 	Byte i;
 	
 	for (i = 0; pString[i] != 0; ++i) 
 	{
-		displayWriteDataRam(pString[i]);
+		displayWriteDDRAM(pString[i]);
 		displayWaitTillNotBusy();
 	}
 }
 
-void displayFirstStart()
+void displayBackLightOn(const Bool bBackLightOn)
+{
+    ioWrite(cDisplayBus_backLight, bBackLightOn);
+}
+
+static void displayFirstStart()
 {
     displayOnOffControl_t onOffSetting;
     displayMovingDirection_t dirSetting;
@@ -265,24 +301,20 @@ void displayFirstStart()
     //The number of display lines and character font
     //cannot be changed after this point.
     displayFunctionSet();
-    displayWaitTillNotBusy();
     
     //Display off
     onOffSetting.bDisplayOn = FALSE;
     onOffSetting.bCursorOn = FALSE;
     onOffSetting.bBlinkingCursorOn = FALSE;
     displayOnOffControl(onOffSetting);
-    displayWaitTillNotBusy();
     
     //Display clear
     displayClear();
-    displayWaitTillNotBusy();
     
     //Entry mode set
     dirSetting.bShiftRightInsteadOfLeft = TRUE;
     dirSetting.bShiftScreenInsteadOfCursor = FALSE;
     displayEntryModeSet(dirSetting);
-    displayWaitTillNotBusy();
 }
 
 void displayInit()

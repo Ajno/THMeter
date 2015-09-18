@@ -8,7 +8,7 @@
 #ifndef DISPLAY_TEST_H_
 #define DISPLAY_TEST_H_
 
-void test_display_hello_init();
-void test_display_hello_run();
+void test_display_shiftAndBackLight_init();
+void test_display_shiftAndBackLight_run();
 
 #endif /* DISPLAY_TEST_H_ */

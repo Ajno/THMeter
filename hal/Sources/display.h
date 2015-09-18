@@ -23,16 +23,16 @@ typedef struct
     Bool bShiftRightInsteadOfLeft;
 }displayMovingDirection_t;
 
+static const Byte cDisplayAddressMax = 80;
+
 void displayInit();
 void displayBackLightOn(const Bool bBackLightOn);
 void displayClear();
 void displayReturnHome();
 void displayOnOffControl(const displayOnOffControl_t cControl);
 void displayOrCursorShift(const displayMovingDirection_t cSetting);
-void displayFunctionSet();
 void displayEntryModeSet(const displayMovingDirection_t cSetting);
-void displayWriteDataRam(const Byte cData);
-void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress);
+void displayMoveCursor(const Byte cAddress);
 void displayWrite(const uchar* pString);
 
 #endif /* DISPLAY_H_ */

@@ -13,6 +13,6 @@ void test_kbi_init(const kbiPin_t pin)
 	config.bPullUp = TRUE;
 	config.bRisingEdge = FALSE;
 	
-	configureKbi(pin,config);
-	installIsr(&kbiDisable);
+	kbiConfigure(pin,config);
+	kbiIsrInstall(&kbiDisable);
 }
