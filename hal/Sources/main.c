@@ -7,18 +7,18 @@
 //#include "pwm_test.h"
 //#include "io_test.h"
 //#include "kbi_test.h"
-//#include "timer_test.h"
+#include "timer_test.h"
 #include "display_test.h"
 
 void main(void)
 {
 	EnableInterrupts
 
-	test_display_hello_init();
+	test_timer_startStop_init();
 	
 	for (;;)
 	{		
-	    test_display_hello_run();
+	    test_timer_startStop_run();
 		__RESET_WATCHDOG()
 		; /* feeds the dog */
 	} /* loop forever */

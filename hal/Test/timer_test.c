@@ -40,8 +40,29 @@ void test_timer_wait_run(const Word cDelayToggle_x100ms)
 
 void test_timer_startStop_init()
 {
+    displayOnOffControl_t control;
+    
     timerInit();
     displayInit();
+    displayClear();
+    displayWaitTillNotBusy();
+    control.bBlinkingCursorOn = FALSE;
+    control.bCursorOn = FALSE;
+    control.bDisplayOn = TRUE;
+    displayOnOffControl(control);
+    displayWaitTillNotBusy();
     
-    timerRestart(1000);// 1 sec
+    displayWrite("<timer test>");
+}
+
+void test_timer_startStop_run()
+{
+    static Bool bBacklighOn = TRUE;
+    
+    if (timerElapsed())
+    {
+        timerRestart(1000);// 1 sec
+        bBacklighOn = (bBacklighOn ? FALSE : TRUE);
+        displayBackLightOn(bBacklighOn);
+    }
 }

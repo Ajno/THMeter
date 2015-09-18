@@ -14,5 +14,6 @@ void test_timer_wait_init();
 void test_timer_wait_run(const Word cDelayToggle_x100ms);
 
 void test_timer_startStop_init();
+void test_timer_wait_run(const Word cDelayToggle_x100ms);
 
 #endif /* TIMER_TEST_H_ */
