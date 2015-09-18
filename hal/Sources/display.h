@@ -33,6 +33,6 @@ void displayFunctionSet();
 void displayEntryModeSet(const displayMovingDirection_t cSetting);
 void displayWriteDataRam(const Byte cData);
 void displayReadBusyAndAddress(Bool* pBusy, Byte* pAddress);
-void displayWrite(const uchar aString[]);
+void displayWrite(const uchar* pString);
 
 #endif /* DISPLAY_H_ */

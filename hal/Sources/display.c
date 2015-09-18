@@ -216,13 +216,13 @@ void displayWaitTillNotBusy()
     } while (bBusy);
 }
 
-void displayWrite(const uchar aString[])
+void displayWrite(const uchar* pString)
 {
 	Byte i;
 	
-	for (i = 0; i < sizeof(aString); ++i) 
+	for (i = 0; pString[i] != 0; ++i) 
 	{
-		displayWriteDataRam(aString[i]);
+		displayWriteDataRam(pString[i]);
 		displayWaitTillNotBusy();
 	}
 }
