@@ -8,84 +8,72 @@
 #include "io.h"
 #include <derivative.h>
 
-static const Byte cMaxByte = 0xFF;
+static const Byte cByteMax = 0xFF;
 
-Byte boolToByte(const Bool cBool)
+static const Byte cIoIdx2IoMask[cPin_B7 + 1] = 
 {
-	if (TRUE == cBool)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
+    PTAD_PTAD1_MASK,
+    PTAD_PTAD2_MASK,
+    PTAD_PTAD3_MASK,
+    PTBD_PTBD0_MASK,
+    PTBD_PTBD1_MASK,
+    PTBD_PTBD2_MASK,
+    PTBD_PTBD3_MASK,
+    PTBD_PTBD4_MASK,
+    PTBD_PTBD5_MASK,
+    PTBD_PTBD6_MASK,
+    PTBD_PTBD7_MASK
+};
 
 void ioConfigure(const io_t idx, const ioConfig_t config)
 {
-	if (cPin_A1 == idx)
-	{
-		PTADD_PTADD1 = boolToByte(config.bOutput);
-		PTAPE_PTAPE1 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_A2 == idx)
-	{
-		PTADD_PTADD2 = boolToByte(config.bOutput);
-		PTAPE_PTAPE2 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_A3 == idx)
-	{
-		PTADD_PTADD3 = boolToByte(config.bOutput);
-		PTAPE_PTAPE3 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B0 == idx)
-	{
-		PTBDD_PTBDD0 = boolToByte(config.bOutput);
-		PTBPE_PTBPE0 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B1 == idx)
-	{
-		PTBDD_PTBDD1 = boolToByte(config.bOutput);
-		PTBPE_PTBPE1 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B2 == idx)
-	{
-		PTBDD_PTBDD2 = boolToByte(config.bOutput);
-		PTBPE_PTBPE2 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B3 == idx)
-	{
-		PTBDD_PTBDD3 = boolToByte(config.bOutput);
-		PTBPE_PTBPE3 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B4 == idx)
-	{
-		PTBDD_PTBDD4 = boolToByte(config.bOutput);
-		PTBPE_PTBPE4 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B5 == idx)
-	{
-		PTBDD_PTBDD5 = boolToByte(config.bOutput);
-		PTBPE_PTBPE5 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B6 == idx)
-	{
-		PTBDD_PTBDD6 = boolToByte(config.bOutput);
-		PTBPE_PTBPE6 = boolToByte(config.bPullUp);
-	}
-	else if (cPin_B7 == idx)
-	{
-		PTBDD_PTBDD7 = boolToByte(config.bOutput);
-		PTBPE_PTBPE7 = boolToByte(config.bPullUp);
-	}
+    if (cPin_A3 < idx) 
+    {        
+        if (config.bOutput) 
+        {            
+            PTBDD |= cIoIdx2IoMask[idx];
+        } 
+        else 
+        {
+            PTBDD &= (~cIoIdx2IoMask[idx]);
+        }
+        
+        if (config.bPullUp) 
+        {            
+            PTBPE |= cIoIdx2IoMask[idx];
+        } 
+        else 
+        {
+            PTBPE &= (~cIoIdx2IoMask[idx]);
+        }
+    } 
+    else 
+    {
+        if (config.bOutput) 
+        {            
+            PTADD |= cIoIdx2IoMask[idx];
+        } 
+        else 
+        {
+            PTADD &= (~cIoIdx2IoMask[idx]);
+        }
+        
+        if (config.bPullUp) 
+        {            
+            PTAPE |= cIoIdx2IoMask[idx];
+        } 
+        else 
+        {
+            PTAPE &= (~cIoIdx2IoMask[idx]);
+        }      
+    }
 }
 
 void ioConfigurePortB(const ioConfig_t config)
 {
     if (config.bOutput)
     {
-        PTBDD = cMaxByte;        
+        PTBDD = cByteMax;        
     }
     else
     {
@@ -94,7 +82,7 @@ void ioConfigurePortB(const ioConfig_t config)
     
     if (config.bPullUp)
     {
-        PTBPE = cMaxByte;
+        PTBPE = cByteMax;
     }
     else
     {
@@ -102,52 +90,30 @@ void ioConfigurePortB(const ioConfig_t config)
     }
 }
 
-void ioWrite(const io_t idx, const Bool value)
+void ioWrite(const io_t idx, const Bool bValue)
 {
-	if (cPin_A1 == idx)
-	{
-		PTAD_PTAD1 = boolToByte(value);
-	}
-	else if (cPin_A2 == idx)
-	{
-		PTAD_PTAD2 = boolToByte(value);
-	}
-	else if (cPin_A3 == idx)
-	{
-		PTAD_PTAD3 = boolToByte(value);
-	}
-	else if (cPin_B0 == idx)
-	{
-		PTBD_PTBD0 = boolToByte(value);
-	}
-	else if (cPin_B1 == idx)
-	{
-		PTBD_PTBD1 = boolToByte(value);
-	}
-	else if (cPin_B2 == idx)
-	{
-		PTBD_PTBD2 = boolToByte(value);
-	}
-	else if (cPin_B3 == idx)
-	{
-		PTBD_PTBD3 = boolToByte(value);
-	}
-	else if (cPin_B4 == idx)
-	{
-		PTBD_PTBD4 = boolToByte(value);
-	}
-	else if (cPin_B5 == idx)
-	{
-		PTBD_PTBD5 = boolToByte(value);
-	}
-	else if (cPin_B6 == idx)
-	{
-		PTBD_PTBD6 = boolToByte(value);
-	}
-	else if (cPin_B7 == idx)
-	{
-		PTBD_PTBD7 = boolToByte(value);
-	}
+    if (cPin_A3 < idx) 
+    {        
+        if (bValue) 
+        {            
+            PTBD |= cIoIdx2IoMask[idx];
+        } 
+        else 
+        {
+            PTBD &= (~cIoIdx2IoMask[idx]);
+        }
+    } 
+    else 
+    {
+        if (bValue) 
+        {            
+            PTAD |= cIoIdx2IoMask[idx];
+        } 
+        else 
+        {
+            PTAD &= (~cIoIdx2IoMask[idx]);
+        }      
+    }
 }
 
 void ioWritePortB(const Byte cValue)
@@ -157,50 +123,19 @@ void ioWritePortB(const Byte cValue)
 
 void ioRead(const io_t idx, Bool* pValue)
 {
-	if (cPin_A1 == idx)
-	{
-		*pValue = PTAD_PTAD1;
-	}
-	else if (cPin_A2 == idx)
-	{
-		*pValue = PTAD_PTAD2;
-	}
-	else if (cPin_A3 == idx)
-	{
-		*pValue = PTAD_PTAD3;
-	}
-	else if (cPin_B0 == idx)
-	{
-		*pValue = PTBD_PTBD0;
-	}
-	else if (cPin_B1 == idx)
-	{
-		*pValue = PTBD_PTBD1;
-	}
-	else if (cPin_B2 == idx)
-	{
-		*pValue = PTBD_PTBD2;
-	}
-	else if (cPin_B3 == idx)
-	{
-		*pValue = PTBD_PTBD3;
-	}
-	else if (cPin_B4 == idx)
-	{
-		*pValue = PTBD_PTBD4;
-	}
-	else if (cPin_B5 == idx)
-	{
-		*pValue = PTBD_PTBD5;
-	}
-	else if (cPin_B6 == idx)
-	{
-		*pValue = PTBD_PTBD6;
-	}
-	else if (cPin_B7 == idx)
-	{
-		*pValue = PTBD_PTBD7;
-	}
+	Word value = 0;
+	
+    if (cPin_A3 < idx) 
+    {        
+        value = PTBD;        
+    } 
+    else 
+    {
+        value = PTAD; 
+    }
+    
+    value &= (cIoIdx2IoMask[idx]);
+    *pValue = (0 < value); 
 }
 
 void ioReadPortB(Byte* pValue)

@@ -58,7 +58,7 @@ void kbiConfigure(const kbiPin_t idx, const kbiConfig_t config)
 	}
 }
 
-void installIsr(pKbiInterruptCallback_t pcIsrClbck)
+static void installIsr(pKbiInterruptCallback_t pcIsrClbck)
 {
 	if (0 != pcIsrClbck)
 	{
@@ -75,7 +75,7 @@ void kbiDisable()
 	KBIPE = 0;
 }
 
-void __interrupt VectorNumber_Vkeyboard isr_keyboardInterrupt(void)
+static void __interrupt VectorNumber_Vkeyboard isr_keyboardInterrupt(void)
 {
 	if (bIsrClbckInstalled)
 	{

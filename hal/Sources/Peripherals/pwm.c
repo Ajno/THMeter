@@ -67,7 +67,7 @@ void pwmClearTimer()
     TPMCNTH = 0;
 }
 
-void __interrupt VectorNumber_Vtpmovf isr_timerOverflow(void)
+static void __interrupt VectorNumber_Vtpmovf isr_timerOverflow(void)
 {
 	if (bIsrClbckInstalled)
 	{

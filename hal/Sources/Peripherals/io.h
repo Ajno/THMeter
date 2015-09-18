@@ -33,7 +33,7 @@ typedef struct
 
 void ioConfigure(const io_t idx, const ioConfig_t config);
 void ioConfigurePortB(const ioConfig_t config);
-void ioWrite(const io_t idx, const Bool value);
+void ioWrite(const io_t idx, const Bool bValue);
 void ioWritePortB(const Byte cValue);
 void ioReadPortB(Byte* pValue);
 void ioRead(const io_t idx, Bool* pValue);
