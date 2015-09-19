@@ -29,7 +29,42 @@ void pwrMgmtGoToSleep(const Bool bDeepSleep)
     } 
     else 
     {
-        // todo disable PWM interrupt, ...
+        // todo disable PWM interrupt, ...?
         systemWait();
+    }
+}
+
+void pwrMgmtGetRcentResetSource(pwrMgmtRecentresetSource_t* pSource)
+{
+    systemRecentResetSource_t source;
+    systemReadResetSource(&source);
+          
+    if (source.bPowerOnReset) 
+    {
+        *pSource = cPwrMgmtResetSource_powerOn;
+    } 
+    else if (source.bCOPWatchdog)
+    {
+        *pSource = cPwrMgmtResetSource_watchdog;
+    }
+    else if (source.bLowVoltageDetect)
+    {
+        *pSource = cPwrMgmtResetSource_lowVoltage;
+    }
+    else if (source.bIllegalOpcode)
+    {
+        *pSource = cPwrMgmtResetSource_illegalOpCode;
+    }
+    else if (source.bIllegalAddress)
+    {
+        *pSource = cPwrMgmtResetSource_illegalAddress;
+    }
+    else if (source.bExternalResetPin)
+    {
+        *pSource = cPwrMgmtResetSource_external;
+    }
+    else
+    {
+        *pSource = cPwrMgmtResetSource_unknown;
     }
 }

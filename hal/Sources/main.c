@@ -15,11 +15,11 @@ void main(void)
 {
 	EnableInterrupts
 
-	test_pwrMgmt_init();
+	test_pwrMgmt_recentReset_init();
 	
 	for (;;)
 	{		
-	    test_pwrMgmt_run();
+	    test_pwrMgmt_recentReset_run();
 		__RESET_WATCHDOG()
 		; /* feeds the dog */
 	} /* loop forever */

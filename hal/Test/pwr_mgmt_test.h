@@ -8,7 +8,10 @@
 #ifndef PWR_MGMT_TEST_H_
 #define PWR_MGMT_TEST_H_
 
-void test_pwrMgmt_init();
-void test_pwrMgmt_run();
+void test_pwrMgmt_sleep_init();
+void test_pwrMgmt_sleep_run();
+
+void test_pwrMgmt_recentReset_init();
+void test_pwrMgmt_recentReset_run();
 
 #endif /* PWR_MGMT_TEST_H_ */
