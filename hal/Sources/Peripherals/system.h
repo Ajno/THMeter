@@ -20,11 +20,21 @@ typedef struct
     Bool bLowVoltageWarningPointHigh;
 }systemConfig_t;
 
+typedef struct
+{
+    Bool bLowVoltageDetect;
+    Bool bIllegalAddress;
+    Bool bIllegalOpcode;
+    Bool bCOPWatchdog;
+    Bool bExternalResetPin;
+    Bool bPowerOnReset;
+}systemRecentResetSource_t;
+
 void systemConfigure(const systemConfig_t cCfg);
 void systemWait();
 void systemStop();
-Bool systemLowVoltageWarningDeteced();
+Bool systemLowVoltageWarningDetected();
 void systemClearLowVoltageWarning();
-void systemStatusRead(Byte* pStatus);
+void systemReadResetSource(systemRecentResetSource_t* pSource);
 
 #endif /* SYSTEM_H_ */

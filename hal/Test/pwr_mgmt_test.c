@@ -55,6 +55,6 @@ void test_pwrMgmt_run()
     if (cButtonState_JustPressed == bButtonState)
     {        
         displayBackLightOn(FALSE);
-        systemStop();
+        pwrMgmtGoToSleep(TRUE);
     }
 }

@@ -28,7 +28,7 @@ void systemStop()
     _Stop;
 }
 
-Bool systemLowVoltageWarningDeteced()
+Bool systemLowVoltageWarningDetected()
 {
     return (SPMSC3_LVWF == 1);
 }
@@ -38,7 +38,12 @@ void systemClearLowVoltageWarning()
     SPMSC3_LVWACK = 0;
 }
 
-void systemStatusRead(Byte* pStatus)
+void systemReadResetSource(systemRecentResetSource_t* pSource)
 {
-    *pStatus = SRS;
+    pSource->bCOPWatchdog = (1 == SRS_COP);
+    pSource->bExternalResetPin = (1 == SRS_PIN);
+    pSource->bIllegalAddress = (1 == SRS_ILAD);
+    pSource->bLowVoltageDetect = (1 == SRS_LVD);
+    pSource->bPowerOnReset = (1 == SRS_POR);
+    pSource->bIllegalOpcode = (1 == SRS_ILOP);
 }
