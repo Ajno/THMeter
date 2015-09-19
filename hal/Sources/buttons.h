@@ -12,8 +12,8 @@
 
 typedef enum
 {
-    cButton_Lower = cPin_A1,
-    cButton_Upper = cPin_A2
+    cButton_Lower = cPin_A2,
+    cButton_Upper = cPin_A1
 }buttons_t;
 
 typedef enum

@@ -58,7 +58,7 @@ void kbiConfigure(const kbiPin_t idx, const kbiConfig_t config)
 	}
 }
 
-static void installIsr(pKbiInterruptCallback_t pcIsrClbck)
+void kbiInstallIsrCallback(pKbiInterruptCallback_t pcIsrClbck)
 {
 	if (0 != pcIsrClbck)
 	{

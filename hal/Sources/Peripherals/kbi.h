@@ -27,6 +27,6 @@ typedef void (*pKbiInterruptCallback_t)(void);
 
 void kbiConfigure(const kbiPin_t idx, const kbiConfig_t config);
 void kbiDisable();
-void kbiIsrInstall(pKbiInterruptCallback_t pcIsrClbck);
+void kbiInstallIsrCallback(pKbiInterruptCallback_t pcIsrClbck);
 
 #endif /* KBI_H_ */

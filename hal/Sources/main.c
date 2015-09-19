@@ -9,16 +9,17 @@
 #include "kbi_test.h"
 #include "timer_test.h"
 #include "display_test.h"
+#include "pwr_mgmt_test.h"
 
 void main(void)
 {
 	EnableInterrupts
 
-	test_display_shiftAndBackLight_init();
+	test_pwrMgmt_init();
 	
 	for (;;)
 	{		
-	    test_display_shiftAndBackLight_run();
+	    test_pwrMgmt_run();
 		__RESET_WATCHDOG()
 		; /* feeds the dog */
 	} /* loop forever */
